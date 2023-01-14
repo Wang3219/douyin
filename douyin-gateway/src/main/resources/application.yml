@@ -1,0 +1,24 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: socialize_route
+          uri: lb://douyin-socialize
+          predicates:
+            - Path=/douyin/message/**,/douyin/relation/**
+          filters:
+            - RewritePath=/douyin/(?<segment>.*), /$\{segment}
+
+        - id: socialize_route
+          uri: lb://douyin-interact
+          predicates:
+            - Path=/douyin/favorite/**,/douyin/comment/**
+          filters:
+            - RewritePath=/douyin/(?<segment>.*), /$\{segment}
+
+        - id: socialize_route
+          uri: lb://douyin-basic
+          predicates:
+            - Path=/douyin/publish/**,/douyin/user/**,/douyin/feed/**
+          filters:
+            - RewritePath=/douyin/(?<segment>.*), /$\{segment}
