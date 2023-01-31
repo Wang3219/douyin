@@ -34,4 +34,19 @@ public class UserController {
         return userVo;
     }
 
+    @PostMapping("/login")
+    public UserVo userLogin(@RequestParam("username") String username, @RequestParam("password") String password) {
+        UserEntity user = userService.Login(username, password);
+
+        //登陆失败
+        if (user == null)
+            return UserVo.fail();
+
+        //登陆成功
+        UserVo userVo = UserVo.success();
+        userVo.setUserid(user.getUserId());
+        userVo.setToken(user.getUsername() + user.getPassword());
+        return userVo;
+    }
+
 }

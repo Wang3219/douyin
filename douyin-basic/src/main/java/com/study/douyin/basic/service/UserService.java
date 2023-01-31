@@ -8,6 +8,9 @@ import com.study.douyin.basic.entity.UserEntity;
  * 用户
  */
 public interface UserService extends IService<UserEntity> {
+
     UserEntity Register(String username, String password);
+
+    UserEntity Login(String username, String password);
 
 }

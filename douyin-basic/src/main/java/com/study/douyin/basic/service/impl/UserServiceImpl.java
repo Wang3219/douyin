@@ -32,4 +32,21 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         baseMapper.insert(userEntity);
         return userEntity;
     }
+
+    @Override
+    public UserEntity Login(String username, String password) {
+        //查询当前用户名对应的用户
+        UserEntity user = baseMapper.selectOne(new QueryWrapper<UserEntity>().eq("username", username));
+
+        //数据库中加密的密码
+        String passwordDB = user.getPassword();
+
+        //判断用户输入的密码和数据库中密码是否匹配
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (passwordEncoder.matches(password, passwordDB))
+            //密码正确则返回用户
+            return user;
+        //密码错误返回null
+        return null;
+    }
 }
