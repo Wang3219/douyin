@@ -1,8 +1,8 @@
-package com.study.douyin.basic.service;
+package com.study.douyin.socialize.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.study.douyin.basic.entity.FollowEntity;
+import com.study.douyin.socialize.entity.FollowEntity;
 
 /**
  * 粉丝

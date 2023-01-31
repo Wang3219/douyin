@@ -1,9 +1,9 @@
-package com.study.douyin.basic.service.impl;
+package com.study.douyin.socialize.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.study.douyin.basic.dao.FollowDao;
-import com.study.douyin.basic.entity.FollowEntity;
-import com.study.douyin.basic.service.FollowService;
+import com.study.douyin.socialize.dao.FollowDao;
+import com.study.douyin.socialize.entity.FollowEntity;
+import com.study.douyin.socialize.service.FollowService;
 import org.springframework.stereotype.Service;
 
 /**

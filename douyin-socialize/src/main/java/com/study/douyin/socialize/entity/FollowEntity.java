@@ -1,4 +1,4 @@
-package com.study.douyin.basic.entity;
+package com.study.douyin.socialize.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;

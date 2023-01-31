@@ -2,15 +2,12 @@ package com.study.douyin.basic.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.study.douyin.basic.dto.UserDto;
-import com.study.douyin.basic.entity.FollowEntity;
 import com.study.douyin.basic.entity.UserEntity;
-import com.study.douyin.basic.service.FollowService;
+import com.study.douyin.basic.feign.SocializeFeignService;
 import com.study.douyin.basic.service.UserService;
 import com.study.douyin.basic.vo.UserInfoVo;
 import com.study.douyin.basic.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -24,7 +21,7 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private FollowService followService;
+    private SocializeFeignService socializeFeignService;
 
     @PostMapping("/register")
     public UserVo userRegister(@RequestParam("username") String username, @RequestParam("password") String password) {
@@ -65,8 +62,8 @@ public class UserController {
             UserInfoVo success = UserInfoVo.success();
             success.setUser(new UserInfoVo.User());
 
-            FollowEntity followEntity = followService.getOne(new QueryWrapper<FollowEntity>().eq("user_id", userId).eq("follow_id", user.getUserId()));
-            success.getUser().setFollow(followEntity==null);
+            //填入参数
+            success.getUser().setFollow(socializeFeignService.isFollow(userId, user.getUserId()));
             success.getUser().setFollowCount(user.getFollowCount());
             success.getUser().setFollowerCount(user.getFollowerCount());
             success.getUser().setId(user.getUserId());
