@@ -29,6 +29,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         userEntity.setPassword(passwordEncoder.encode(password));
 
+        //初始化部分数据
+        userEntity.setFollowCount(0);
+        userEntity.setFollowerCount(0);
+
         baseMapper.insert(userEntity);
         return userEntity;
     }
