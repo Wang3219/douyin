@@ -29,17 +29,9 @@ public class UserEntity {
      */
     private String userAvatar;
     /**
-     * 粉丝表id
-     */
-    private Integer followId;
-    /**
      * 粉丝总数
      */
     private Integer followCount;
-    /**
-     * 关注表id
-     */
-    private Integer followerId;
     /**
      * 关注总数
      */
