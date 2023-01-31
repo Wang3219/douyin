@@ -20,17 +20,17 @@ public class UserController {
 
     @PostMapping("/register")
     public UserVo userRegister(@RequestParam("username") String username, @RequestParam("password") String password) {
-        UserEntity newUser = userService.Register(username, password);
+        UserEntity user = userService.Register(username, password);
 
         // 已经注册过，注册失败
-        if (newUser == null) {
+        if (user == null) {
             return UserVo.fail();
         }
 
         // 注册成功
         UserVo userVo = UserVo.success();
-        userVo.setUserid(newUser.getUserId());
-        userVo.setToken(newUser.getUsername() + newUser.getPassword());
+        userVo.setUserid(user.getUserId());
+        userVo.setToken(user.getUsername() + user.getPassword());
         return userVo;
     }
 
