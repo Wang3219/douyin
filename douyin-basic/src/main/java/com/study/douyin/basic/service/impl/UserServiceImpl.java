@@ -3,7 +3,6 @@ package com.study.douyin.basic.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.study.douyin.basic.dao.UserDao;
-import com.study.douyin.basic.dto.UserDto;
 import com.study.douyin.basic.entity.UserEntity;
 import com.study.douyin.basic.service.UserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
