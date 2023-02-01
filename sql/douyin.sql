@@ -11,11 +11,47 @@
  Target Server Version : 80028
  File Encoding         : 65001
 
- Date: 01/02/2023 11:04:31
+ Date: 01/02/2023 11:35:17
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for comment
+-- ----------------------------
+DROP TABLE IF EXISTS `comment`;
+CREATE TABLE `comment` (
+  `comment_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `video_id` int NOT NULL,
+  `comment_text` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`comment_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+
+-- ----------------------------
+-- Records of comment
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for favorite
+-- ----------------------------
+DROP TABLE IF EXISTS `favorite`;
+CREATE TABLE `favorite` (
+  `favorite_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  `video_id` int NOT NULL,
+  PRIMARY KEY (`favorite_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+
+-- ----------------------------
+-- Records of favorite
+-- ----------------------------
+BEGIN;
+COMMIT;
 
 -- ----------------------------
 -- Table structure for follow
@@ -59,6 +95,25 @@ INSERT INTO `user` (`user_id`, `username`, `password`, `user_avatar`, `follow_co
 INSERT INTO `user` (`user_id`, `username`, `password`, `user_avatar`, `follow_count`, `follower_count`, `status_code`, `status_msg`) VALUES (18, 'n', '$2a$10$bHP5FHLBhuI2MyeG8Hop2envxQQuStDQKWp90ahz9MR.xPE/te3hy', 'q', 3, 5, '6', 'fe');
 INSERT INTO `user` (`user_id`, `username`, `password`, `user_avatar`, `follow_count`, `follower_count`, `status_code`, `status_msg`) VALUES (20, 'd', '$2a$10$ZTaNQKZXN36ADKElXll2duMY8uw4gMsG5e93b0c3TJPBPBDPkjjLK', NULL, 0, 0, NULL, NULL);
 INSERT INTO `user` (`user_id`, `username`, `password`, `user_avatar`, `follow_count`, `follower_count`, `status_code`, `status_msg`) VALUES (21, 'aa', '$2a$10$.RSEmi9XdGuABuXptVPyPupzl2zTYzryFUylg4VwzkLSMbaJVZmha', NULL, 0, 0, NULL, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for video
+-- ----------------------------
+DROP TABLE IF EXISTS `video`;
+CREATE TABLE `video` (
+  `video_id` int NOT NULL,
+  `user_id` int DEFAULT NULL,
+  `play_url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `cover_url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  `title` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
+  PRIMARY KEY (`video_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 ROW_FORMAT=DYNAMIC;
+
+-- ----------------------------
+-- Records of video
+-- ----------------------------
+BEGIN;
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
