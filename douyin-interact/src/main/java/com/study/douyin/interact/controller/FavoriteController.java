@@ -1,6 +1,5 @@
 package com.study.douyin.interact.controller;
 
-import com.study.douyin.interact.entity.FavoriteEntity;
 import com.study.douyin.interact.service.FavoriteService;
 import com.study.douyin.interact.vo.FavoriteVo;
 import org.springframework.beans.factory.annotation.Autowired;
