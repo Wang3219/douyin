@@ -12,4 +12,6 @@ public interface UserService extends IService<UserEntity> {
 
     UserEntity Login(String username, String password);
 
+    Integer getUserIdByToken(String token);
+
 }

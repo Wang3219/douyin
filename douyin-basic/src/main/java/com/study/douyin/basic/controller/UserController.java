@@ -76,4 +76,10 @@ public class UserController {
         }
     }
 
+    @GetMapping("/getUserIdByToken")
+    public Integer getUserIdByToken(@RequestParam("token") String token) {
+        int userId = userService.getUserIdByToken(token);
+        return userId;
+    }
+
 }

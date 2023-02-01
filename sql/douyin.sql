@@ -11,7 +11,7 @@
  Target Server Version : 80028
  File Encoding         : 65001
 
- Date: 01/02/2023 11:35:17
+ Date: 01/02/2023 22:17:01
 */
 
 SET NAMES utf8mb4;
@@ -22,7 +22,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `comment`;
 CREATE TABLE `comment` (
-  `comment_id` int NOT NULL,
+  `comment_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `video_id` int NOT NULL,
   `comment_text` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
@@ -41,7 +41,7 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `favorite`;
 CREATE TABLE `favorite` (
-  `favorite_id` int NOT NULL,
+  `favorite_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int NOT NULL,
   `video_id` int NOT NULL,
   PRIMARY KEY (`favorite_id`) USING BTREE
@@ -102,7 +102,7 @@ COMMIT;
 -- ----------------------------
 DROP TABLE IF EXISTS `video`;
 CREATE TABLE `video` (
-  `video_id` int NOT NULL,
+  `video_id` int NOT NULL AUTO_INCREMENT,
   `user_id` int DEFAULT NULL,
   `play_url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,
   `cover_url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL,

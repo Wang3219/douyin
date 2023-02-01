@@ -52,4 +52,10 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         //密码错误返回null
         return null;
     }
+
+    @Override
+    public Integer getUserIdByToken(String token) {
+        UserEntity user = this.getOne(new QueryWrapper<UserEntity>().eq("password", token));
+        return user.getUserId();
+    }
 }
