@@ -66,7 +66,6 @@ public class PublishController {
                 videoList[i].setTitle(videos.get(i).getTitle());
             }
 
-
             success.setVideoList(videoList);
             return success;
         }
