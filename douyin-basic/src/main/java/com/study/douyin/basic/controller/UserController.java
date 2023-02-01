@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.study.douyin.basic.entity.UserEntity;
 import com.study.douyin.basic.feign.SocializeFeignService;
 import com.study.douyin.basic.service.UserService;
+import com.study.douyin.basic.vo.User;
 import com.study.douyin.basic.vo.UserInfoVo;
 import com.study.douyin.basic.vo.UserVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,7 @@ public class UserController {
 
         if (user != null) {
             UserInfoVo success = UserInfoVo.success();
-            success.setUser(new UserInfoVo.User());
+            success.setUser(new User());
 
             //填入参数
             success.getUser().setFollow(socializeFeignService.isFollow(userId, user.getUserId()));

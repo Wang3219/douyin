@@ -3,7 +3,6 @@ package com.study.douyin.basic.vo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.study.douyin.basic.util.StatusConstant;
 import lombok.Data;
-import lombok.Getter;
 import lombok.Setter;
 
 /**
