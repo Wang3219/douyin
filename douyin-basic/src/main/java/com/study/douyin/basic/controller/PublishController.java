@@ -1,20 +1,15 @@
 package com.study.douyin.basic.controller;
 
 import com.study.douyin.basic.entity.UserEntity;
-import com.study.douyin.basic.entity.VideoEntity;
-import com.study.douyin.basic.feign.SocializeFeignService;
 import com.study.douyin.basic.service.UserService;
 import com.study.douyin.basic.service.VideoService;
 import com.study.douyin.basic.vo.PublishVo;
-import com.study.douyin.basic.vo.User;
 import com.study.douyin.basic.vo.Video;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/publish")
