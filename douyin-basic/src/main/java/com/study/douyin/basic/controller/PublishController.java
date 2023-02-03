@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/publish")
 public class PublishController {
@@ -39,5 +41,16 @@ public class PublishController {
         }
 
         return PublishVo.fail();
+    }
+
+    /**
+     * 通过videoId获取Video信息
+     * @param videoIds
+     * @return
+     */
+    @GetMapping("/videoList")
+    public Video[] videoList(@RequestParam("videoIds") List<Integer> videoIds, @RequestParam("token") String token) {
+        Video[] videoList = videoService.getVideoListByVideoIds(videoIds, token);
+        return videoList;
     }
 }

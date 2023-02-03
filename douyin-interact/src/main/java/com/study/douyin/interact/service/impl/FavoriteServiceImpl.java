@@ -6,8 +6,12 @@ import com.study.douyin.interact.dao.FavoriteDao;
 import com.study.douyin.interact.entity.FavoriteEntity;
 import com.study.douyin.interact.feign.BasicFeignService;
 import com.study.douyin.interact.service.FavoriteService;
+import com.study.douyin.interact.vo.Video;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service("favoriteService")
 public class FavoriteServiceImpl extends ServiceImpl<FavoriteDao, FavoriteEntity> implements FavoriteService {
@@ -44,5 +48,33 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteDao, FavoriteEntity
             return count == 1;
         }
         return false;
+    }
+
+    @Override
+    public Video[] favoriteList(Integer userId, String token) {
+        // 获取该用户所有喜欢的视频的videoId
+        List<FavoriteEntity> favoriteEntities = this.list(new QueryWrapper<FavoriteEntity>().eq("user_id", userId));
+        List<Integer> videoIds = favoriteEntities.stream().map(entity -> {
+            return entity.getVideoId();
+        }).collect(Collectors.toList());
+
+        Video[] videoList = basicFeignService.videoList(videoIds, token);
+
+        return videoList;
+    }
+
+    @Override
+    public Integer countByVideoId(Integer videoId) {
+        int count = this.count(new QueryWrapper<FavoriteEntity>().eq("video_id", videoId));
+        return count;
+    }
+
+    @Override
+    public boolean isFavorite(Integer userId, Integer videoId) {
+        FavoriteEntity favoriteEntity = baseMapper.selectOne(new QueryWrapper<FavoriteEntity>()
+                .eq("user_id", userId)
+                .eq("video_id", videoId));
+
+        return favoriteEntity != null;
     }
 }

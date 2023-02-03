@@ -16,4 +16,6 @@ public interface VideoService extends IService<VideoEntity> {
 
     Video[] listVideoList(UserEntity user);
 
+    Video[] getVideoListByVideoIds(List<Integer> videoIds, String token);
+
 }

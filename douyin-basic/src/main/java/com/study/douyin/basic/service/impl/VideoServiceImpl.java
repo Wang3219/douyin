@@ -5,7 +5,9 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.study.douyin.basic.dao.VideoDao;
 import com.study.douyin.basic.entity.UserEntity;
 import com.study.douyin.basic.entity.VideoEntity;
+import com.study.douyin.basic.feign.InteractFeignService;
 import com.study.douyin.basic.feign.SocializeFeignService;
+import com.study.douyin.basic.service.UserService;
 import com.study.douyin.basic.service.VideoService;
 import com.study.douyin.basic.vo.User;
 import com.study.douyin.basic.vo.Video;
@@ -19,6 +21,12 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
 
     @Autowired
     private SocializeFeignService socializeFeignService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private InteractFeignService interactFeignService;
 
     /**
      * 查询当前用户发布的所有视频基础信息
@@ -66,6 +74,44 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
             videoList[i].setFavorite(false);
 
             videoList[i].setTitle(videos.get(i).getTitle());
+        }
+        return videoList;
+    }
+
+    @Override
+    public Video[] getVideoListByVideoIds(List<Integer> videoIds, String token) {
+        Video[] videoList = new Video[videoIds.size()];
+        for (int i=0; i < videoIds.size(); i++) {
+            // 通过videoId查询视频基础信息
+            Integer videoId = videoIds.get(i);
+            VideoEntity videoEntity = this.getById(videoId);
+
+            // 查询视频作者信息
+            int userId = videoEntity.getUserId();
+            UserEntity user = userService.getById(userId);
+
+            // 获取当前用户信息
+            UserEntity u = userService.getOne(new QueryWrapper<UserEntity>().eq("password", token));
+
+            // 封装数据
+            User author = new User();
+            author.setId(userId);
+            author.setName(user.getUsername());
+            author.setFollowCount(user.getFollowCount());
+            author.setFollowerCount(user.getFollowerCount());
+            author.setFollow(socializeFeignService.isFollow(userId, u.getUserId()));
+
+            Video video = new Video();
+            video.setAuthor(author);
+            video.setId(videoId);
+            video.setTitle(videoEntity.getTitle());
+            video.setCoverurl(videoEntity.getCoverUrl());
+            video.setPlayurl(videoEntity.getPlayUrl());
+            video.setFavoriteCount(interactFeignService.favoriteCount(videoId));
+            video.setFavorite(interactFeignService.isFavorite(u.getUserId(), videoId));
+            video.setCommentCount(interactFeignService.CommentCount(videoId));
+
+            videoList[i] = video;
         }
         return videoList;
     }
