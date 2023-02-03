@@ -27,8 +27,8 @@ public class PublishController {
         // 查询当前用户信息
         UserEntity user = userService.getById(userId);
 
-        // 如果用户存在且token正确则成功
-        if (user != null && token.equals(user.getPassword())) {
+        // 如果用户存在则成功
+        if (user != null) {
             PublishVo success = PublishVo.success();
 
             // 获取所有需要返回的视频以及视频作者信息
