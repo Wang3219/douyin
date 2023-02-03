@@ -57,14 +57,15 @@ public class UserController {
     @GetMapping("/")
     public UserInfoVo userInfo(@RequestParam("user_id") Integer userId, @RequestParam("token") String token) {
         //通过userId获得对应用户数据
-        UserEntity user = userService.getOne(new QueryWrapper<UserEntity>().eq("password", token));
+        UserEntity u = userService.getOne(new QueryWrapper<UserEntity>().eq("password", token));
+        UserEntity user = userService.getById(userId);
 
         if (user != null) {
             UserInfoVo success = UserInfoVo.success();
             success.setUser(new User());
 
             //填入参数
-            success.getUser().setFollow(socializeFeignService.isFollow(userId, user.getUserId()));
+            success.getUser().setFollow(socializeFeignService.isFollow(userId, u.getUserId()));
             success.getUser().setFollowCount(user.getFollowCount());
             success.getUser().setFollowerCount(user.getFollowerCount());
             success.getUser().setId(user.getUserId());
