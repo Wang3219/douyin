@@ -16,31 +16,33 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteDao, FavoriteEntity
     private BasicFeignService basicFeignService;
 
     @Override
-    public Integer like(String token, Integer videoId) {
-        Integer userId = basicFeignService.getUserIdByToken(token);
+    public boolean action(String token, Integer videoId, Integer actionType) {
+        if (actionType == 1) {
+            // 点赞
+            Integer userId = basicFeignService.getUserIdByToken(token);
 
-        // 创建要存储的数据对象并填充数据
-        FavoriteEntity favoriteEntity = new FavoriteEntity();
-        favoriteEntity.setUserId(userId);
-        favoriteEntity.setVideoId(videoId);
+            // 创建要存储的数据对象并填充数据
+            FavoriteEntity favoriteEntity = new FavoriteEntity();
+            favoriteEntity.setUserId(userId);
+            favoriteEntity.setVideoId(videoId);
 
-        // 查询是否已经点赞
-        FavoriteEntity entity = baseMapper.selectOne(new QueryWrapper<FavoriteEntity>()
-                .eq("user_id", userId)
-                .eq("video_id", videoId));
+            // 查询是否已经点赞
+            FavoriteEntity entity = baseMapper.selectOne(new QueryWrapper<FavoriteEntity>()
+                    .eq("user_id", userId)
+                    .eq("video_id", videoId));
 
-        int count = 0;
-        // 没点过赞才插入数据
-        if (entity == null)
-            count = baseMapper.insert(favoriteEntity);
-        return count;
-    }
+            int count = 0;
+            // 没点过赞才插入数据
+            if (entity == null)
+                count = baseMapper.insert(favoriteEntity);
+            return count == 1;
+        } else if (actionType == 2) {
+            // 取消点赞
+            Integer userId = basicFeignService.getUserIdByToken(token);
 
-    @Override
-    public Integer unlike(String token, Integer videoId) {
-        Integer userId = basicFeignService.getUserIdByToken(token);
-
-        int count = baseMapper.delete(new QueryWrapper<FavoriteEntity>().eq("user_id", userId).eq("video_id", videoId));
-        return count;
+            int count = baseMapper.delete(new QueryWrapper<FavoriteEntity>().eq("user_id", userId).eq("video_id", videoId));
+            return count == 1;
+        }
+        return false;
     }
 }
