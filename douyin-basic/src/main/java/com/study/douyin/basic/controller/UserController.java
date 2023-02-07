@@ -83,4 +83,10 @@ public class UserController {
         return userId;
     }
 
+    @GetMapping("/getUserByToken")
+    public User getUserByToken(@RequestParam("token") String token) {
+        User user = userService.getUserByToken(token);
+        return user;
+    }
+
 }

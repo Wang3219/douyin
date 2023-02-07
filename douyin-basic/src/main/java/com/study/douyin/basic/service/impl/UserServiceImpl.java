@@ -4,13 +4,18 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.study.douyin.basic.dao.UserDao;
 import com.study.douyin.basic.entity.UserEntity;
+import com.study.douyin.basic.feign.SocializeFeignService;
 import com.study.douyin.basic.service.UserService;
+import com.study.douyin.basic.vo.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service("userService")
 public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements UserService {
 
+    @Autowired
+    private SocializeFeignService socializeFeignService;
 
     @Override
     public UserEntity Register(String username, String password) {
@@ -57,5 +62,17 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     public Integer getUserIdByToken(String token) {
         UserEntity user = this.getOne(new QueryWrapper<UserEntity>().eq("password", token));
         return user.getUserId();
+    }
+
+    @Override
+    public User getUserByToken(String token) {
+        UserEntity userEntity = this.getOne(new QueryWrapper<UserEntity>().eq("password", token));
+        User user = new User();
+        user.setId(userEntity.getUserId());
+        user.setName(userEntity.getUsername());
+        user.setFollowCount(userEntity.getFollowCount());
+        user.setFollowerCount(userEntity.getFollowerCount());
+        user.setFollow(socializeFeignService.isFollow((int) user.getId(), (int) user.getId()));
+        return user;
     }
 }
