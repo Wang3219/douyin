@@ -30,7 +30,7 @@ public class PublishController {
         UserEntity user = userService.getById(userId);
 
         // 如果用户存在则成功
-        if (user != null) {
+        if (user != null && token.equals(user.getPassword())) {
             PublishVo success = PublishVo.success();
 
             // 获取所有需要返回的视频以及视频作者信息

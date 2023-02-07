@@ -68,10 +68,9 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
             videoList[i].setPlayurl(videos.get(i).getPlayUrl());
             videoList[i].setCoverurl(videos.get(i).getCoverUrl());
 
-            //TODO 远程调用互动接口，互动接口完成后再修改
-            videoList[i].setFavoriteCount(0);
-            videoList[i].setCommentCount(0);
-            videoList[i].setFavorite(false);
+            videoList[i].setFavoriteCount(interactFeignService.favoriteCount(videos.get(i).getVideoId()));
+            videoList[i].setCommentCount(interactFeignService.CommentCount(videos.get(i).getVideoId()));
+            videoList[i].setFavorite(interactFeignService.isFavorite(user.getUserId(), videos.get(i).getVideoId()));
 
             videoList[i].setTitle(videos.get(i).getTitle());
         }
