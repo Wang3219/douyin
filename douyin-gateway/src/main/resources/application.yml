@@ -19,6 +19,6 @@ spring:
         - id: socialize_route
           uri: lb://douyin-basic
           predicates:
-            - Path=/douyin/publish/**,/douyin/user/**,/douyin/feed/**
+            - Path=/douyin/publish/**,/douyin/user/**,/douyin/feed
           filters:
             - RewritePath=/douyin/(?<segment>.*), /$\{segment}

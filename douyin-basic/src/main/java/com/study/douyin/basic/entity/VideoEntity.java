@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.sql.Timestamp;
+
 /**
  * 视频表
  */
@@ -31,4 +33,9 @@ public class VideoEntity {
      * 视频标题
      */
     private String title;
+
+    /**
+     * 视频发布时间
+     */
+    private Timestamp publishTime;
 }

@@ -3,7 +3,7 @@ spring:
     driverClassName: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/douyin?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
-    password: root
+    password: 123456
   cloud:
     nacos:
       discovery:
@@ -18,4 +18,18 @@ mybatis-plus:
       id-type: auto
 
 server:
-  port: 10000
+  port: 10001
+
+
+## 视频配置
+video-config:
+  ##Server地址前缀
+  server-path: http://192.168.31.100:10001/ # your server-path
+  ##视频保存路径
+  video-save-path: videos #your target folder name
+  ##视频封面保存路径
+  video-cover-save-path: covers #your target folder name
+  ##配置封面截取第几帧
+  frame-num: 1
+  ##feed流至多返回多少条视频
+  feed-video-max-num: 15
