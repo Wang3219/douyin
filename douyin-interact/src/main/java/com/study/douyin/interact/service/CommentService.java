@@ -9,4 +9,6 @@ public interface CommentService extends IService<CommentEntity> {
 
     Comment PostComment(String token, int videoId, int actionType, String commentText, Integer commentId);
 
+    Comment[] getCommentList(String token, int videoId);
+
 }

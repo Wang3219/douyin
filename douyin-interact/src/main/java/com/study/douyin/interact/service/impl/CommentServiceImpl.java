@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Service("commentService")
 public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> implements CommentService {
@@ -67,5 +68,34 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
         comment.setContent(commentEntity.getCommentText());
         comment.setCreateDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(commentEntity.getCreateDate()));
         return comment;
+    }
+
+    /**
+     * 获取评论列表
+     * @param token
+     * @param videoId
+     * @return
+     */
+    @Override
+    public Comment[] getCommentList(String token, int videoId) {
+        User user = basicFeignService.getUserByToken(token);
+
+        List<CommentEntity> comments = baseMapper.selectList(new QueryWrapper<CommentEntity>().eq("video_id", videoId));
+        Comment[] commentList = new Comment[comments.size()];
+        for (int i = 0; i < comments.size(); i++) {
+            Comment comment = new Comment();
+            CommentEntity commentEntity = comments.get(i);
+
+            User author = basicFeignService.getUserById(commentEntity.getUserId(), (int) user.getId());
+
+            comment.setId(commentEntity.getCommentId());
+            comment.setContent(commentEntity.getCommentText());
+            comment.setUser(author);
+            comment.setCreateDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(commentEntity.getCreateDate()));
+
+            commentList[i] = comment;
+        }
+
+        return commentList;
     }
 }

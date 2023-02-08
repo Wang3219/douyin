@@ -16,6 +16,9 @@ public interface BasicFeignService {
     @GetMapping("/user/getUserByToken")
     User getUserByToken(@RequestParam("token") String token);
 
+    @GetMapping("/user/getUserById")
+    User getUserById(@RequestParam("userId") int userId, @RequestParam("followId") int followId);
+
     @GetMapping("/publish/videoList")
     Video[] videoList(@RequestParam("videoIds") List<Integer> videoIds, @RequestParam("token") String token);
 

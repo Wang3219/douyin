@@ -45,4 +45,21 @@ public class CommentController {
         return success;
     }
 
+    /**
+     * 获取评论列表
+     * @param token
+     * @param videoId
+     * @return
+     */
+    @GetMapping("/list")
+    public CommentVo GetCommentList(@RequestParam("token") String token, @RequestParam("video_id") int videoId) {
+        Comment[] commentList = commentService.getCommentList(token, videoId);
+        if (commentList == null)
+            return CommentVo.fail();
+
+        CommentVo success = CommentVo.success();
+        success.setCommentList(commentList);
+        return success;
+    }
+
 }
