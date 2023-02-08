@@ -114,7 +114,6 @@ public class PublishController {
         }
         //String coverTargetPath=staticPath+VIDEO_COVER_PATH+File.separator+filename+DEFAULT_IMG_FORMAT;
         String coverTargetPath=coversFolderPath+File.separator+filename+DEFAULT_IMG_FORMAT;
-        log.warn("!!!!!!"+coverTargetPath);
         videoService.fetchFrameToFile(videoTargetPath, coverTargetPath, FRAME_NUM);
 
         //向mysql中存入视频数据
