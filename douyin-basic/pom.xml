@@ -59,16 +59,16 @@
         </dependency>
 
         <!-- 视频封面处理-->
-        <dependency>
-            <groupId>org.bytedeco</groupId>
-            <artifactId>javacv</artifactId>
-            <version>0.8</version>
-        </dependency>
         <!--<dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacv</artifactId>
-            <version>1.5.6</version>
+            <version>0.8</version>
         </dependency>-->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv</artifactId>
+            <version>1.5.6</version>
+        </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>
             <artifactId>javacpp</artifactId>

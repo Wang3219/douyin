@@ -7,8 +7,10 @@ import com.study.douyin.basic.vo.ActionVo;
 import com.study.douyin.basic.vo.PublishVo;
 import com.study.douyin.basic.vo.UserVo;
 import com.study.douyin.basic.vo.Video;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,9 +18,11 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @RestController
 @RequestMapping("/publish")
 public class PublishController {
@@ -28,8 +32,10 @@ public class PublishController {
 
     @Value("${video-config.video-save-path}")
     private String VIDEO_PATH;
+
     @Value("${video-config.frame-num}")
     private int FRAME_NUM;
+
     @Value("${video-config.video-cover-save-path}")
     private String VIDEO_COVER_PATH;
 
@@ -84,9 +90,12 @@ public class PublishController {
         }
         // 生成视频名称
         String filename= UUID.randomUUID().toString();
+        String resource = ResourceUtils.getURL("classpath:").getPath()+"static/";
+        //String resource = this.getClass().getClassLoader().getResource("static/").getFile();
         //保存视频进本地
-        ServletContext servletContext = session.getServletContext();
-        String videosFolderPath = servletContext.getRealPath(VIDEO_PATH);//获取视频文件夹路径
+        String videosPath = resource + VIDEO_PATH;
+        String videosFolderPath = URLDecoder.decode(videosPath, "UTF-8");
+        videosFolderPath = videosFolderPath.substring(1);
         File videosFolder=new File(videosFolderPath);
         if (!videosFolder.exists()) {//如果不存在该文件夹，则创建
             videosFolder.mkdir();
@@ -96,13 +105,16 @@ public class PublishController {
         videoService.fetchVideoToFile(videoTargetPath, data);
 
         //保存封面进本地
-        String coversFolderPath = servletContext.getRealPath(VIDEO_COVER_PATH);//获取封面文件夹路径
+        String coversPath = resource + VIDEO_COVER_PATH;
+        String coversFolderPath = URLDecoder.decode(coversPath, "UTF-8");
+        coversFolderPath = coversFolderPath.substring(1);
         File coversFolder=new File(coversFolderPath);
         if (!coversFolder.exists()) {//如果不存在该文件夹则创建
             coversFolder.mkdir();
         }
         //String coverTargetPath=staticPath+VIDEO_COVER_PATH+File.separator+filename+DEFAULT_IMG_FORMAT;
         String coverTargetPath=coversFolderPath+File.separator+filename+DEFAULT_IMG_FORMAT;
+        log.warn("!!!!!!"+coverTargetPath);
         videoService.fetchFrameToFile(videoTargetPath, coverTargetPath, FRAME_NUM);
 
         //向mysql中存入视频数据
