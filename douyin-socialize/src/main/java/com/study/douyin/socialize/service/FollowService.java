@@ -14,4 +14,6 @@ public interface FollowService extends IService<FollowEntity> {
 
     User[] getFollowList(Integer userId, String token);
 
+    User[] getFollowerList(Integer userId, String token);
+
 }
