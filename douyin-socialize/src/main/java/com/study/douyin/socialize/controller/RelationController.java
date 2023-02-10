@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.study.douyin.socialize.entity.FollowEntity;
 import com.study.douyin.socialize.service.FollowService;
 import com.study.douyin.socialize.vo.RelationVo;
+import com.study.douyin.socialize.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,5 +34,21 @@ public class RelationController {
         if (flag)
             return RelationVo.success();
         return RelationVo.fail();
+    }
+
+    /**
+     * 获取关注列表
+     * @param userId
+     * @param token
+     * @return
+     */
+    @GetMapping("/follow/list")
+    public RelationVo getFollowList(@RequestParam("user_id") Integer userId, @RequestParam("token") String token) {
+        User[] userList = followService.getFollowList(userId, token);
+        if (userList == null)
+            return RelationVo.fail();
+        RelationVo success = RelationVo.success();
+        success.setUserList(userList);
+        return success;
     }
 }
