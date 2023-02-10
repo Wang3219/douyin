@@ -9,4 +9,6 @@ import com.study.douyin.socialize.entity.FollowEntity;
  */
 public interface FollowService extends IService<FollowEntity> {
 
+    boolean action(String token, Integer toUserId, Integer actionType);
+
 }
