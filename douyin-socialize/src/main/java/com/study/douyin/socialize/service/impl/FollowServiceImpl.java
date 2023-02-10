@@ -110,4 +110,39 @@ public class FollowServiceImpl extends ServiceImpl<FollowDao, FollowEntity> impl
 
         return userList;
     }
+
+    /**
+     * 获取好友列表
+     * @param userId
+     * @param token
+     * @return
+     */
+    @Override
+    public User[] getFriendList(Integer userId, String token) {
+        // 判断userId和token是否匹配
+        Integer id = basicFeignService.getUserIdByToken(token);
+        if (userId != id)
+            return null;
+
+        // 查寻所有与当前用户互关的用户id
+        List<FollowEntity> followEntities = baseMapper.selectList(new QueryWrapper<FollowEntity>().eq("user_id", userId));
+        List<Integer> userIds = followEntities.stream().filter(followEntity -> {
+            int count = baseMapper.selectCount(new QueryWrapper<FollowEntity>()
+                    .eq("user_id", followEntity.getFollowId())
+                    .eq("follow_id", userId));
+            return count == 1;
+        }).map(followEntity -> {
+            return followEntity.getFollowId();
+        }).collect(Collectors.toList());
+
+        // 通过userId查询所有用户信息
+        User[] userList = new User[userIds.size()];
+        for (int i = 0; i < userIds.size(); i++) {
+            User user = basicFeignService.getUserById(userIds.get(i), userId);
+            userList[i] = user;
+        }
+
+        return userList;
+
+    }
 }

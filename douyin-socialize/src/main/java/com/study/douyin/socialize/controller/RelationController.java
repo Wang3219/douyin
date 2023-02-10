@@ -67,4 +67,20 @@ public class RelationController {
         success.setUserList(userList);
         return success;
     }
+
+    /**
+     * 获取好友列表
+     * @param userId
+     * @param token
+     * @return
+     */
+    @GetMapping("/friend/list")
+    public RelationVo getFriendList(@RequestParam("user_id") Integer userId, @RequestParam("token") String token) {
+        User[] userList = followService.getFriendList(userId, token);
+        if (userList == null)
+            return RelationVo.fail();
+        RelationVo success = RelationVo.success();
+        success.setUserList(userList);
+        return success;
+    }
 }
