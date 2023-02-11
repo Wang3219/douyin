@@ -1,4 +1,4 @@
-# 极简版抖音
+# 极简版抖音 （开发中）
 ## 💡 项目简介
 
 仓库: [https://github.com/wangwang3219/douyin](https://github.com/wangwang3219/douyin)
@@ -33,3 +33,8 @@
   - 向好友发送消息 （未完成）
   - 获取聊天记录   （未完成）
 
+## 待优化
+  - 参数检查
+  - 并发
+  - Redis
+  - ...
