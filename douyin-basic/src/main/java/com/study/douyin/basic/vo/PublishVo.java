@@ -25,6 +25,7 @@ public class PublishVo {
     /**
      * 视频列表
      */
+    @Setter(onMethod_ = {@JsonProperty("video_list")})
     private Video[] videoList;
 
     public static PublishVo success() {

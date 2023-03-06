@@ -20,7 +20,7 @@ public class FavoriteController {
      * @param actionType 1-点赞 2-取消点赞
      * @return
      */
-    @GetMapping("/action")
+    @PostMapping("/action")
     public FavoriteVo action(@RequestParam("token") String token, @RequestParam("video_id") Integer videoId, @RequestParam("action_type") Integer actionType) {
         boolean flag = favoriteService.action(token, videoId, actionType);
 
@@ -36,7 +36,7 @@ public class FavoriteController {
      * @param token
      * @return
      */
-    @PostMapping("/list")
+    @GetMapping("/list")
     public FavoriteVo list(@RequestParam("user_id") Integer userId, @RequestParam("token") String token) {
         Video[] videolist = favoriteService.favoriteList(userId, token);
         FavoriteVo success = FavoriteVo.success();

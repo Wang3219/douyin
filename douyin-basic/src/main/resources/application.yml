@@ -26,7 +26,7 @@ server:
 ## 视频配置
 video-config:
   ##Server地址前缀
-  server-path: http://192.168.31.100:10001/ # your server-path
+  server-path: http://192.168.1.106:10001/ # your server-path
   ##视频保存路径
   video-save-path: videos #your target folder name
   ##视频封面保存路径
