@@ -134,7 +134,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
     @Override
     public void fetchVideoToFile(String videoTargetFile, MultipartFile data) throws IOException {
         data.transferTo(new File(videoTargetFile));
-        log.info("视频存入成功："+videoTargetFile);
+        log.info("视频保存成功："+videoTargetFile);
     }
 
     @Override
@@ -169,6 +169,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
             BufferedImage bi = new BufferedImage(height, width, BufferedImage.TYPE_3BYTE_BGR);
             //截取出来的图是歪的，旋转九十度
             BufferedImage targetImage = rotateClockwise90(f.image.getBufferedImage());
+            //BufferedImage targetImage = f.image.getBufferedImage();
 
             bi.getGraphics().drawImage(targetImage.getScaledInstance(targetImage.getWidth(), targetImage.getHeight(), Image.SCALE_SMOOTH),
                     0, 0, null);
@@ -205,7 +206,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
         BufferedImage bufferedImage = new BufferedImage(height, width, bi.getType());
         for (int i = 0; i < width; i++){
             for (int j = 0; j < height; j++){
-                //第一个参数未x轴，第二个为y轴
+                //第一个参数为x轴，第二个为y轴
                 bufferedImage.setRGB(height - 1 - j, i , bi.getRGB(i, j));}}
         return bufferedImage;
     }
