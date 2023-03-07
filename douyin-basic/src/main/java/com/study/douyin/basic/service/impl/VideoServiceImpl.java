@@ -168,11 +168,12 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
             int height = img.height();
             BufferedImage bi = new BufferedImage(height, width, BufferedImage.TYPE_3BYTE_BGR);
             //截取出来的图是歪的，旋转九十度
-            BufferedImage targetImage = rotateClockwise90(f.image.getBufferedImage());
-            //BufferedImage targetImage = f.image.getBufferedImage();
+            //BufferedImage targetImage = rotateClockwise90(f.image.getBufferedImage());
+            BufferedImage targetImage = f.image.getBufferedImage();
 
+            int coordinate = (targetImage.getHeight() - width)/2 < 0 ? -(targetImage.getHeight() - width)/2 : (targetImage.getHeight() - width)/2;
             bi.getGraphics().drawImage(targetImage.getScaledInstance(targetImage.getWidth(), targetImage.getHeight(), Image.SCALE_SMOOTH),
-                    0, 0, null);
+                    0, coordinate , null);
             ff.flush();
             ff.stop();
             ImageIO.write(bi, DEFAULT_IMG_FORMAT, frameFile);
@@ -203,11 +204,12 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
     public static BufferedImage rotateClockwise90(BufferedImage bi) {
         int width = bi.getWidth();
         int height = bi.getHeight();
-        BufferedImage bufferedImage = new BufferedImage(height, width, bi.getType());
+        BufferedImage bufferedImage = new BufferedImage(width, height, bi.getType());
         for (int i = 0; i < width; i++){
             for (int j = 0; j < height; j++){
                 //第一个参数为x轴，第二个为y轴
-                bufferedImage.setRGB(height - 1 - j, i , bi.getRGB(i, j));}}
+                //bufferedImage.setRGB(height - 1 - j, i , bi.getRGB(i, j));}}
+                bufferedImage.setRGB(i, j , bi.getRGB(i, j));}}
         return bufferedImage;
     }
 }
