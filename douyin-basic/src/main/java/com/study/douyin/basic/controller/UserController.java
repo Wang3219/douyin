@@ -89,4 +89,10 @@ public class UserController {
         return user;
     }
 
+    @GetMapping("/getUserById")
+    public User getUserById(@RequestParam("userId") int userId, @RequestParam("followId") int followId) {
+        User user = userService.getUserById(userId, followId);
+        return user;
+    }
+
 }

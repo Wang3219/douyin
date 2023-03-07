@@ -17,4 +17,6 @@ public interface UserService extends IService<UserEntity> {
 
     User getUserByToken(String token);
 
+    User getUserById(int userId, int followId);
+
 }

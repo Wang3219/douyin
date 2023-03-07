@@ -75,4 +75,16 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
         user.setFollow(socializeFeignService.isFollow((int) user.getId(), (int) user.getId()));
         return user;
     }
+
+    @Override
+    public User getUserById(int userId, int followId) {
+        UserEntity userEntity = this.getById(userId);
+        User user = new User();
+        user.setId(userEntity.getUserId());
+        user.setName(userEntity.getUsername());
+        user.setFollowCount(userEntity.getFollowCount());
+        user.setFollowerCount(userEntity.getFollowerCount());
+        user.setFollow(socializeFeignService.isFollow(userId, followId));
+        return user;
+    }
 }
