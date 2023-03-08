@@ -20,6 +20,7 @@ public class FavoriteVo {
     /**
      * 用户点赞视频列表
      */
+    @Setter(onMethod_ = {@JsonProperty("video_list")})
     private Video[] videoList;
 
     public static FavoriteVo success() {

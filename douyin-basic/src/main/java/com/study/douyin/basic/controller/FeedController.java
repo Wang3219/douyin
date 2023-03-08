@@ -80,7 +80,7 @@ public class FeedController {
                         userBuilder.setFollow(true);
                         //查询视频信息
                         int favoriteCount = favoriteService.favoriteCount(video.getVideoId());
-                        boolean isFavorite = favoriteService.isFavorite(video.getUserId(), video.getVideoId());
+                        boolean isFavorite = favoriteService.isFavorite(userId, video.getVideoId());
                         long commentCount = favoriteService.CommentCount(video.getVideoId());
                         log.info(favoriteCount+"-"+isFavorite+"-"+commentCount);
                         videoBuilder.setId(video.getVideoId());
