@@ -173,7 +173,6 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
                 //截取出来的图是歪的，旋转九十度
                 //BufferedImage targetImage = rotateClockwise90(f.image.getBufferedImage());
                 BufferedImage targetImage = f.image.getBufferedImage();
-
                 int coordinate = (width - height)/2;
                 bi.getGraphics().drawImage(targetImage.getScaledInstance(targetImage.getWidth(), targetImage.getHeight(), Image.SCALE_SMOOTH),
                         0, coordinate , null);
