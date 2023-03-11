@@ -11,7 +11,7 @@ public class RelationVo {
      * 状态码，0-成功，其他值-失败
      */
     @Setter(onMethod_ = {@JsonProperty("status_code")})
-    private int statusCode;
+    private long statusCode;
     /**
      * 返回状态描述
      */

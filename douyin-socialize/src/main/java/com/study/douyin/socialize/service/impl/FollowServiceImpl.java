@@ -32,7 +32,10 @@ public class FollowServiceImpl extends ServiceImpl<FollowDao, FollowEntity> impl
     @Override
     public boolean action(String token, Integer toUserId, Integer actionType) {
         // 获取当前用户id
-        Integer userId = basicFeignService.getUserIdByToken(token);
+        int userId = basicFeignService.getUserIdByToken(token);
+        // 当前token对应的user不存在
+        if (userId == -1)
+            return false;
         // 数据库变化行数
         int count = 0;
         if (actionType == 1) {
@@ -50,6 +53,7 @@ public class FollowServiceImpl extends ServiceImpl<FollowDao, FollowEntity> impl
                     .eq("user_id", toUserId)
                     .eq("follow_id", userId));
         }
+        // actionType若不等于1或2，则count为初始值0，return false
         return count == 1;
     }
 
@@ -143,6 +147,5 @@ public class FollowServiceImpl extends ServiceImpl<FollowDao, FollowEntity> impl
         }
 
         return userList;
-
     }
 }
