@@ -21,10 +21,12 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteDao, FavoriteEntity
 
     @Override
     public boolean action(String token, Integer videoId, Integer actionType) {
+        int userId = basicFeignService.getUserIdByToken(token);
+        // 当前token对应的user不存在
+        if (userId == -1)
+            return false;
         if (actionType == 1) {
             // 点赞
-            Integer userId = basicFeignService.getUserIdByToken(token);
-
             // 创建要存储的数据对象并填充数据
             FavoriteEntity favoriteEntity = new FavoriteEntity();
             favoriteEntity.setUserId(userId);
@@ -42,11 +44,10 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteDao, FavoriteEntity
             return count == 1;
         } else if (actionType == 2) {
             // 取消点赞
-            Integer userId = basicFeignService.getUserIdByToken(token);
-
             int count = baseMapper.delete(new QueryWrapper<FavoriteEntity>().eq("user_id", userId).eq("video_id", videoId));
             return count == 1;
         }
+        // actionType的值不合法
         return false;
     }
 

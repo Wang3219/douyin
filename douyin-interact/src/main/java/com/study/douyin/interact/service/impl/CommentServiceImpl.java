@@ -40,6 +40,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
     public Comment PostComment(String token, int videoId, int actionType, String commentText, Integer commentId) {
         // 获取当前用户信息
         User user = basicFeignService.getUserByToken(token);
+        // 当前token不存在user
+        if (user == null)
+            return null;
         CommentEntity commentEntity = new CommentEntity();
 
         // actionType==1添加评论，否则删除评论
@@ -49,18 +52,18 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
             commentEntity.setCommentText(commentText);
             commentEntity.setCreateDate(new Date());
             this.save(commentEntity);
-        } else {
+        } else if (actionType == 2) {
             commentEntity = this.getById(commentId);
             // 若评论存在且是当前用户发布的，才可以删除
             if (commentEntity != null && commentEntity.getUserId() == user.getId())
                 this.removeById(commentId);
             // 若当前评论不存在则删除出错
-            else {
-                Comment comment = new Comment();
-                comment.setId(-1);
-                return comment;
-            }
+            else
+                return null;
         }
+        // actionType不为1或2
+        else
+            return null;
 
         Comment comment = new Comment();
         comment.setId(commentEntity.getCommentId());
@@ -79,6 +82,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
     @Override
     public Comment[] getCommentList(String token, int videoId) {
         User user = basicFeignService.getUserByToken(token);
+        // 当前token不存在user
+        if (user == null)
+            return null;
 
         List<CommentEntity> comments = baseMapper.selectList(new QueryWrapper<CommentEntity>().eq("video_id", videoId));
         Comment[] commentList = new Comment[comments.size()];

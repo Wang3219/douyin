@@ -36,8 +36,8 @@ public class CommentController {
             @RequestParam(value = "comment_id", required = false) Integer commentId) {
         Comment comment = commentService.PostComment(token, videoId, actionType, commentText, commentId);
 
-        // 若返回id为1则表示出错
-        if (comment.getId() == -1)
+        // 若返回null则表示出错
+        if (comment == null)
             return CommentVo.fail();
 
         CommentVo success = CommentVo.success();
