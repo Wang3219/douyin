@@ -158,7 +158,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
             while (i < length) {
                 f = ff.grabFrame();
                 // 过滤前5帧，避免出现全黑的图片，依自己情况而定
-                if ((i >= 5) || (f.image != null)) {
+                if ((i >= 5) && (f.image != null)) {
                     break;
                 }
                 i++;
