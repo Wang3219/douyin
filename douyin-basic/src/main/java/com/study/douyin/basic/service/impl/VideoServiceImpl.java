@@ -98,7 +98,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
         Video[] videoList = new Video[videoIds.size()];
         for (int i=0; i < videoIds.size(); i++) {
             // 通过videoId查询视频基础信息
-            Integer videoId = videoIds.get(i);
+            int videoId = videoIds.get(i);
             VideoEntity videoEntity = this.getById(videoId);
 
             // 查询视频作者信息

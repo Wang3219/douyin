@@ -10,6 +10,7 @@ import com.study.douyin.basic.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service("userService")
 public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements UserService {
@@ -19,6 +20,8 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     @Override
     public UserEntity Register(String username, String password) {
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password))
+            return null;
         UserEntity userEntity = new UserEntity();
 
         //判断当前用户是否存在
@@ -43,8 +46,13 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     @Override
     public UserEntity Login(String username, String password) {
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password))
+            return null;
         //查询当前用户名对应的用户
         UserEntity user = baseMapper.selectOne(new QueryWrapper<UserEntity>().eq("username", username));
+        // 不存在此用户名的用户
+        if (user == null)
+            return null;
 
         //数据库中加密的密码
         String passwordDB = user.getPassword();
@@ -60,19 +68,29 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
 
     @Override
     public Integer getUserIdByToken(String token) {
+        if (StringUtils.isEmpty(token))
+            return -1;
         UserEntity user = this.getOne(new QueryWrapper<UserEntity>().eq("password", token));
+        // 不存在此token对应的user
+        if (user == null)
+            return -1;
         return user.getUserId();
     }
 
     @Override
     public User getUserByToken(String token) {
+        if (StringUtils.isEmpty(token))
+            return null;
         UserEntity userEntity = this.getOne(new QueryWrapper<UserEntity>().eq("password", token));
         User user = new User();
-        user.setId(userEntity.getUserId());
-        user.setName(userEntity.getUsername());
-        user.setFollowCount(userEntity.getFollowCount());
-        user.setFollowerCount(userEntity.getFollowerCount());
-        user.setFollow(socializeFeignService.isFollow((int) user.getId(), (int) user.getId()));
+        // user存在
+        if (userEntity != null) {
+            user.setId(userEntity.getUserId());
+            user.setName(userEntity.getUsername());
+            user.setFollowCount(userEntity.getFollowCount());
+            user.setFollowerCount(userEntity.getFollowerCount());
+            user.setFollow(socializeFeignService.isFollow((int) user.getId(), (int) user.getId()));
+        }
         return user;
     }
 
@@ -80,11 +98,14 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     public User getUserById(int userId, int followId) {
         UserEntity userEntity = this.getById(userId);
         User user = new User();
-        user.setId(userEntity.getUserId());
-        user.setName(userEntity.getUsername());
-        user.setFollowCount(userEntity.getFollowCount());
-        user.setFollowerCount(userEntity.getFollowerCount());
-        user.setFollow(socializeFeignService.isFollow(userId, followId));
+        // 当前id对应的user存在
+        if (userEntity != null) {
+            user.setId(userEntity.getUserId());
+            user.setName(userEntity.getUsername());
+            user.setFollowCount(userEntity.getFollowCount());
+            user.setFollowerCount(userEntity.getFollowerCount());
+            user.setFollow(socializeFeignService.isFollow(userId, followId));
+        }
         return user;
     }
 }
