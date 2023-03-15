@@ -10,7 +10,7 @@ import com.study.douyin.socialize.vo.User;
  */
 public interface FollowService extends IService<FollowEntity> {
 
-    boolean action(String token, Integer toUserId, Integer actionType);
+    boolean action(int userId, Integer toUserId, Integer actionType);
 
     User[] getFollowList(Integer userId, String token);
 

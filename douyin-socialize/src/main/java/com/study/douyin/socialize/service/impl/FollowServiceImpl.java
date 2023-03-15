@@ -8,6 +8,9 @@ import com.study.douyin.socialize.feign.BasicFeignService;
 import com.study.douyin.socialize.service.FollowService;
 import com.study.douyin.socialize.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,15 +27,19 @@ public class FollowServiceImpl extends ServiceImpl<FollowDao, FollowEntity> impl
 
     /**
      * 关注
-     * @param token
+     * @param userId
      * @param toUserId 对方id
      * @param actionType 1-关注 2-取消关注
      * @return
      */
+    @Caching(evict = {
+            @CacheEvict(value = "follow", key = "#userId"),
+            @CacheEvict(value = "follower", key = "#toUserId"),
+            @CacheEvict(value = "friend", key = "#userId"),
+            @CacheEvict(value = "friend", key = "#toUserId")
+    })
     @Override
-    public boolean action(String token, Integer toUserId, Integer actionType) {
-        // 获取当前用户id
-        int userId = basicFeignService.getUserIdByToken(token);
+    public boolean action(int userId, Integer toUserId, Integer actionType) {
         // 当前token对应的user不存在
         if (userId == -1)
             return false;
@@ -63,6 +70,7 @@ public class FollowServiceImpl extends ServiceImpl<FollowDao, FollowEntity> impl
      * @param token
      * @return
      */
+    @Cacheable(value = "follow", key = "#userId", sync = true)
     @Override
     public User[] getFollowList(Integer userId, String token) {
         // 判断userId和token是否匹配
@@ -92,6 +100,7 @@ public class FollowServiceImpl extends ServiceImpl<FollowDao, FollowEntity> impl
      * @param token
      * @return
      */
+    @Cacheable(value = "follower", key = "#userId", sync = true)
     @Override
     public User[] getFollowerList(Integer userId, String token) {
         // 判断userId和token是否匹配
@@ -121,6 +130,7 @@ public class FollowServiceImpl extends ServiceImpl<FollowDao, FollowEntity> impl
      * @param token
      * @return
      */
+    @Cacheable(value = "friend", key = "#userId", sync = true)
     @Override
     public User[] getFriendList(Integer userId, String token) {
         // 判断userId和token是否匹配

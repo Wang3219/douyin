@@ -2,6 +2,7 @@ package com.study.douyin.socialize.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.study.douyin.socialize.entity.FollowEntity;
+import com.study.douyin.socialize.feign.BasicFeignService;
 import com.study.douyin.socialize.service.FollowService;
 import com.study.douyin.socialize.vo.RelationVo;
 import com.study.douyin.socialize.vo.User;
@@ -14,6 +15,9 @@ public class RelationController {
 
     @Autowired
     private FollowService followService;
+
+    @Autowired
+    private BasicFeignService basicFeignService;
 
     @GetMapping("/follow/isFollow")
     public Boolean isFollow(@RequestParam("userId") Integer userId, @RequestParam("followId") Integer followId) {
@@ -30,7 +34,9 @@ public class RelationController {
      */
     @PostMapping("/action")
     public RelationVo action(@RequestParam("token") String token, @RequestParam("to_user_id") Integer toUserId, @RequestParam("action_type") Integer actionType) {
-        boolean flag = followService.action(token, toUserId, actionType);
+        // 获取当前用户id
+        int userId = basicFeignService.getUserIdByToken(token);
+        boolean flag = followService.action(userId, toUserId, actionType);
         if (flag)
             return RelationVo.success();
         return RelationVo.fail();
