@@ -8,6 +8,8 @@ import com.study.douyin.interact.feign.BasicFeignService;
 import com.study.douyin.interact.service.FavoriteService;
 import com.study.douyin.interact.vo.Video;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,9 +21,9 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteDao, FavoriteEntity
     @Autowired
     private BasicFeignService basicFeignService;
 
+    @CacheEvict(value = "favorite", key = "#userId")
     @Override
-    public boolean action(String token, Integer videoId, Integer actionType) {
-        int userId = basicFeignService.getUserIdByToken(token);
+    public boolean action(int userId, Integer videoId, Integer actionType) {
         // 当前token对应的user不存在
         if (userId == -1)
             return false;
@@ -51,6 +53,7 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteDao, FavoriteEntity
         return false;
     }
 
+    @Cacheable(value = "favorite", key = "#userId", sync = true)
     @Override
     public Video[] favoriteList(Integer userId, String token) {
         // 获取该用户所有喜欢的视频的videoId

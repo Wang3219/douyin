@@ -9,6 +9,8 @@ import com.study.douyin.interact.service.CommentService;
 import com.study.douyin.interact.vo.Comment;
 import com.study.douyin.interact.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -36,6 +38,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
      * @param commentId
      * @return
      */
+    @CacheEvict(value = "comment", key = "#videoId")
     @Override
     public Comment PostComment(String token, int videoId, int actionType, String commentText, Integer commentId) {
         // 获取当前用户信息
@@ -79,6 +82,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
      * @param videoId
      * @return
      */
+    @Cacheable(value = "comment", key = "#videoId", sync = true)
     @Override
     public Comment[] getCommentList(String token, int videoId) {
         User user = basicFeignService.getUserByToken(token);

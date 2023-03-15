@@ -10,6 +10,17 @@ spring:
         server-addr: 127.0.0.1:8848
   application:
     name: douyin-interact
+  redis:
+    host: 127.0.0.1
+    port: 6379
+  cache:
+    type: redis
+    redis:
+      # 缓存空值，解决缓存穿透问题
+      cache-null-values: true
+      use-key-prefix: true
+      # 设置缓存过期时间
+      time-to-live: 3600000
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
