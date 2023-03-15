@@ -6,6 +6,7 @@ import com.study.douyin.basic.service.Strategy;
 import com.study.douyin.basic.service.VideoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -32,6 +33,7 @@ public class GetLatestStrategy implements Strategy {
      * @param timestamp
      * @return
      */
+    @Cacheable(value = "video", key = "#root.methodName", sync = true)
     @Override
     public List<VideoEntity> getVideo(Timestamp timestamp) {
         QueryWrapper<VideoEntity> queryWrapper = new QueryWrapper<>();

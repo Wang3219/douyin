@@ -12,6 +12,17 @@ spring:
     name: douyin-basic
   resources:
     static-locations: classpath:static/
+  redis:
+    host: 127.0.0.1
+    port: 6379
+  cache:
+    type: redis
+    redis:
+      # 缓存空值，解决缓存穿透问题
+      cache-null-values: true
+      use-key-prefix: true
+      # 设置缓存过期时间
+      time-to-live: 3600000
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml
@@ -26,7 +37,7 @@ server:
 ## 视频配置
 video-config:
   ##Server地址前缀
-  server-path: http://169.254.203.62:10010/ # your server-path
+  server-path: http://192.168.1.106:10010/ # your server-path
   ##视频保存路径
   video-save-path: videos #your target folder name
   ##视频封面保存路径

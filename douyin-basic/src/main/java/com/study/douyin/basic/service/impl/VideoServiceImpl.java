@@ -16,6 +16,9 @@ import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -59,6 +62,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
      * @param user
      * @return
      */
+    @Cacheable(value = "video", key = "#user.userId", sync = true)
     @Override
     public Video[] listVideoList(UserEntity user) {
         //查询视频表获取当前用户发的视频的信息
@@ -191,8 +195,11 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
         }
     }
 
-
-
+    // 失效模式，投稿发布更新数据库后删除“当前用户发布的视频列表”和“feed流返回视频列表”缓存数据
+    @Caching(evict = {
+            @CacheEvict(value = "video", key = "#userId"),
+            @CacheEvict(value = "video", key = "'getVideo'")
+    })
     @Override
     public void saveVideoMsg(int userId, String videoPath, String coverPath, String title) {
         VideoEntity video = new VideoEntity();
