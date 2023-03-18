@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -57,7 +58,7 @@ public class FeedController {
      */
     @GetMapping("/feed")
     public FeedVo feed(@RequestParam("latest_time") String latest_time, @RequestParam("token") String token) throws InterruptedException {
-        Long latestTime=latest_time==null?1L:Long.parseLong(latest_time);
+        Long latestTime="0".equals(latest_time)?System.currentTimeMillis():Long.parseLong(latest_time);
         Integer userId = userService.getUserIdByToken(token);
         Timestamp timestamp=new Timestamp(latestTime);
         List<VideoEntity> videoList = feedService.getVideoByStrategy(feedStrategy, timestamp);

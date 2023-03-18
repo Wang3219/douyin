@@ -37,7 +37,7 @@ public class GetLatestStrategy implements Strategy {
     @Override
     public List<VideoEntity> getVideo(Timestamp timestamp) {
         QueryWrapper<VideoEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.ge("publish_time", timestamp).orderByDesc("publish_time")
+        queryWrapper.le("publish_time", timestamp).orderByDesc("publish_time")
                 .last("limit "+VIDEO_MAX_NUM);
         return videoService.list(queryWrapper);
     }
