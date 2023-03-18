@@ -12,9 +12,9 @@ import com.study.douyin.basic.service.VideoService;
 import com.study.douyin.basic.vo.User;
 import com.study.douyin.basic.vo.Video;
 import lombok.extern.slf4j.Slf4j;
-import org.bytedeco.javacpp.opencv_core;
 import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
+import org.bytedeco.javacv.Java2DFrameConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -155,8 +155,6 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
             if (frameNum > length) {
                 frameNum = length - 5;
             }
-            //指定第几帧
-            ff.setFrameNumber(frameNum);
             int i = 0;
             Frame f = null;
             while (i < length) {
@@ -168,27 +166,29 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
                 i++;
             }
             //BufferedImage bi = f.image.getBufferedImage();
-            opencv_core.IplImage img = f.image;
-            int width = img.width();
-            int height = img.height();
-            BufferedImage bi;
-            if (width > height){
-                 bi = new BufferedImage(height, width, BufferedImage.TYPE_3BYTE_BGR);
-                //截取出来的图是歪的，旋转九十度
-                //BufferedImage targetImage = rotateClockwise90(f.image.getBufferedImage());
-                BufferedImage targetImage = f.image.getBufferedImage();
-                int coordinate = (width - height)/2;
-                bi.getGraphics().drawImage(targetImage.getScaledInstance(targetImage.getWidth(), targetImage.getHeight(), Image.SCALE_SMOOTH),
-                        0, coordinate , null);
-            } else {
-                bi = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
-                BufferedImage targetImage = f.image.getBufferedImage();
-                bi.getGraphics().drawImage(targetImage.getScaledInstance(targetImage.getWidth(), targetImage.getHeight(), Image.SCALE_SMOOTH),
-                        0, 0 , null);
-            }
-            ff.flush();
-            ff.stop();
+//            opencv_core.IplImage img = f.image;
+//            int width = img.width();
+//            int height = img.height();
+//            BufferedImage bi;
+//            if (width > height){
+//                 bi = new BufferedImage(height, width, BufferedImage.TYPE_3BYTE_BGR);
+//                //截取出来的图是歪的，旋转九十度
+//                //BufferedImage targetImage = rotateClockwise90(f.image.getBufferedImage());
+//                BufferedImage targetImage = f.image.getBufferedImage();
+//                int coordinate = (width - height)/2;
+//                bi.getGraphics().drawImage(targetImage.getScaledInstance(targetImage.getWidth(), targetImage.getHeight(), Image.SCALE_SMOOTH),
+//                        0, coordinate , null);
+//            } else {
+//                bi = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+//                BufferedImage targetImage = f.image.getBufferedImage();
+//                bi.getGraphics().drawImage(targetImage.getScaledInstance(targetImage.getWidth(), targetImage.getHeight(), Image.SCALE_SMOOTH),
+//                        0, 0 , null);
+//            }
+            Java2DFrameConverter converter = new Java2DFrameConverter();
+            BufferedImage bi = converter.getBufferedImage(f);
             ImageIO.write(bi, DEFAULT_IMG_FORMAT, frameFile);
+            ff.stop();
+            ff.close();
             log.info("视频封面保存成功："+targetFile);
         } catch (Exception e) {
             throw new RuntimeException("转换视频图片异常");
