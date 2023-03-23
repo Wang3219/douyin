@@ -33,8 +33,19 @@
   - 向好友发送消息
   - 获取聊天记录
 
+
+## 技术栈
+  + SpringBoot
+  + SpringCloud
+  + Gateway
+  + OpenFeign
+  + Nacos
+  + Mybatis-plus(mysql8.0)
+  + SpringCache(Redis)
+  + CompletableFuture
+
+
 ## 待优化
-  - 并发
   - kafka
   - oss存储视频和封面
   - 抽取公共模块
