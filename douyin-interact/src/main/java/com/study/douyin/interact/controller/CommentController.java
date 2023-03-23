@@ -53,9 +53,13 @@ public class CommentController {
      */
     @GetMapping("/list")
     public CommentVo GetCommentList(@RequestParam("token") String token, @RequestParam("video_id") int videoId) {
-        Comment[] commentList = commentService.getCommentList(token, videoId);
-        if (commentList == null)
+        Comment[] commentList = new Comment[0];
+        try {
+            commentList = commentService.getCommentList(token, videoId);
+        } catch (Exception e) {
+            e.printStackTrace();
             return CommentVo.fail();
+        }
 
         CommentVo success = CommentVo.success();
         success.setCommentList(commentList);

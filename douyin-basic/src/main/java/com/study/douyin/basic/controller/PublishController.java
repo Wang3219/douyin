@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @RestController
@@ -56,11 +57,16 @@ public class PublishController {
 
         // 如果用户存在则成功
         if (user != null && token.equals(user.getPassword())) {
-            PublishVo success = PublishVo.success();
-
             // 获取所有需要返回的视频以及视频作者信息
-            Video[] videoList = videoService.listVideoList(user);
-
+            Video[] videoList = new Video[0];
+            try {
+                videoList = videoService.listVideoList(user);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return PublishVo.fail();
+            }
+            // 成功
+            PublishVo success = PublishVo.success();
             success.setVideoList(videoList);
             return success;
         }
@@ -75,7 +81,13 @@ public class PublishController {
      */
     @GetMapping("/videoList")
     public Video[] videoList(@RequestParam("videoIds") List<Integer> videoIds, @RequestParam("token") String token) {
-        Video[] videoList = videoService.getVideoListByVideoIds(videoIds, token);
+        Video[] videoList = new Video[0];
+        try {
+            videoList = videoService.getVideoListByVideoIds(videoIds, token);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
         return videoList;
     }
 

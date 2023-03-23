@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.study.douyin.socialize.dao.MessageDao;
 import com.study.douyin.socialize.entity.MessageEntity;
 import com.study.douyin.socialize.service.MessageService;
+import com.study.douyin.socialize.util.ThreadPool;
 import com.study.douyin.socialize.vo.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -15,8 +16,11 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,7 +64,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
     }
 
     @Override
-    public Message[] getMessageList(long fromUserId, long toUserId) throws ParseException {
+    public Message[] getMessageList(long fromUserId, long toUserId) throws Exception {
         // 通过当前service调用使用springCache的方法，避免不通过AOP导致注释不生效
         List<MessageEntity> messageEntities = messageService.getMessageFromRedis(fromUserId, toUserId);
 
@@ -84,17 +88,25 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         int size = messageEntities.size();
         Message[] messageList = new Message[size];
 
+        List<CompletableFuture> futureList = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            MessageEntity messageEntity = messageEntities.get(i);
-            Message message = new Message();
-            message.setId(messageEntity.getId());
-            message.setFromUserid(messageEntity.getFromUserId());
-            message.setToUserid(messageEntity.getToUserId());
-            message.setCreateTime(messageEntity.getMessageTime().getTime());
-            message.setContent(messageEntity.getContent());
-            messageList[i] = message;
+            int finalI = i;
+            MessageEntity messageEntity = messageEntities.get(finalI);
+            // 放入线程池中运行
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                Message message = new Message();
+                message.setId(messageEntity.getId());
+                message.setFromUserid(messageEntity.getFromUserId());
+                message.setToUserid(messageEntity.getToUserId());
+                message.setCreateTime(messageEntity.getMessageTime().getTime());
+                message.setContent(messageEntity.getContent());
+                messageList[finalI] = message;
+            }, ThreadPool.executor);
+            futureList.add(future);
         }
 
+        // 阻塞主线程等待，避免主线程提前返回结果，导致数据错误
+        CompletableFuture.allOf(futureList.toArray(new CompletableFuture[futureList.size()])).get();
         return messageList;
     }
 

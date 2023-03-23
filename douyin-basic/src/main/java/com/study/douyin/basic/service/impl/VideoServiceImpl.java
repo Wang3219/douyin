@@ -9,6 +9,7 @@ import com.study.douyin.basic.feign.InteractFeignService;
 import com.study.douyin.basic.feign.SocializeFeignService;
 import com.study.douyin.basic.service.UserService;
 import com.study.douyin.basic.service.VideoService;
+import com.study.douyin.basic.util.ThreadPool;
 import com.study.douyin.basic.vo.User;
 import com.study.douyin.basic.vo.Video;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 
 @Slf4j
@@ -64,7 +68,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
      */
     @Cacheable(value = "video", key = "#user.userId", sync = true)
     @Override
-    public Video[] listVideoList(UserEntity user) {
+    public Video[] listVideoList(UserEntity user) throws Exception {
         //查询视频表获取当前用户发的视频的信息
         List<VideoEntity> videos = this.searchVideosByUserId(user.getUserId());
 
@@ -81,57 +85,74 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
         Video[] videoList = new Video[size];
 
         //查询并填入每个视频的数据
+        List<CompletableFuture> futureList = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            videoList[i] = new Video();
-            videoList[i].setId(videos.get(i).getVideoId());
-            videoList[i].setAuthor(author);
-            videoList[i].setPlayurl(videos.get(i).getPlayUrl());
-            videoList[i].setCoverurl(videos.get(i).getCoverUrl());
+            int finalI = i;
+            // 放入线程池中运行
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                videoList[finalI] = new Video();
+                videoList[finalI].setId(videos.get(finalI).getVideoId());
+                videoList[finalI].setAuthor(author);
+                videoList[finalI].setPlayurl(videos.get(finalI).getPlayUrl());
+                videoList[finalI].setCoverurl(videos.get(finalI).getCoverUrl());
 
-            videoList[i].setFavoriteCount(interactFeignService.favoriteCount(videos.get(i).getVideoId()));
-            videoList[i].setCommentCount(interactFeignService.CommentCount(videos.get(i).getVideoId()));
-            videoList[i].setFavorite(interactFeignService.isFavorite(user.getUserId(), videos.get(i).getVideoId()));
+                videoList[finalI].setFavoriteCount(interactFeignService.favoriteCount(videos.get(finalI).getVideoId()));
+                videoList[finalI].setCommentCount(interactFeignService.CommentCount(videos.get(finalI).getVideoId()));
+                videoList[finalI].setFavorite(interactFeignService.isFavorite(user.getUserId(), videos.get(finalI).getVideoId()));
 
-            videoList[i].setTitle(videos.get(i).getTitle());
+                videoList[finalI].setTitle(videos.get(finalI).getTitle());
+            }, ThreadPool.executor);
+            futureList.add(future);
         }
+        // 阻塞主线程等待，避免主线程提前返回结果，导致数据错误
+        CompletableFuture.allOf(futureList.toArray(new CompletableFuture[futureList.size()])).get();
         return videoList;
     }
 
     @Override
-    public Video[] getVideoListByVideoIds(List<Integer> videoIds, String token) {
+    public Video[] getVideoListByVideoIds(List<Integer> videoIds, String token) throws Exception {
         Video[] videoList = new Video[videoIds.size()];
+        List<CompletableFuture> futureList = new ArrayList<>();
         for (int i=0; i < videoIds.size(); i++) {
-            // 通过videoId查询视频基础信息
-            int videoId = videoIds.get(i);
-            VideoEntity videoEntity = this.getById(videoId);
+            int finalI = i;
+            // 放入线程池中运行
+            CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                // 通过videoId查询视频基础信息
+                int videoId = videoIds.get(finalI);
+                VideoEntity videoEntity = this.getById(videoId);
 
-            // 查询视频作者信息
-            int userId = videoEntity.getUserId();
-            UserEntity user = userService.getById(userId);
+                // 查询视频作者信息
+                int userId = videoEntity.getUserId();
+                UserEntity user = userService.getById(userId);
 
-            // 获取当前用户信息
-            UserEntity u = userService.getOne(new QueryWrapper<UserEntity>().eq("password", token));
+                // 获取当前用户信息
+                UserEntity u = userService.getOne(new QueryWrapper<UserEntity>().eq("password", token));
 
-            // 封装数据
-            User author = new User();
-            author.setId(userId);
-            author.setName(user.getUsername());
-            author.setFollowCount(user.getFollowCount());
-            author.setFollowerCount(user.getFollowerCount());
-            author.setFollow(socializeFeignService.isFollow(userId, u.getUserId()));
+                // 封装数据
+                User author = new User();
+                author.setId(userId);
+                author.setName(user.getUsername());
+                author.setFollowCount(user.getFollowCount());
+                author.setFollowerCount(user.getFollowerCount());
+                author.setFollow(socializeFeignService.isFollow(userId, u.getUserId()));
 
-            Video video = new Video();
-            video.setAuthor(author);
-            video.setId(videoId);
-            video.setTitle(videoEntity.getTitle());
-            video.setCoverurl(videoEntity.getCoverUrl());
-            video.setPlayurl(videoEntity.getPlayUrl());
-            video.setFavoriteCount(interactFeignService.favoriteCount(videoId));
-            video.setFavorite(interactFeignService.isFavorite(u.getUserId(), videoId));
-            video.setCommentCount(interactFeignService.CommentCount(videoId));
+                Video video = new Video();
+                video.setAuthor(author);
+                video.setId(videoId);
+                video.setTitle(videoEntity.getTitle());
+                video.setCoverurl(videoEntity.getCoverUrl());
+                video.setPlayurl(videoEntity.getPlayUrl());
+                video.setFavoriteCount(interactFeignService.favoriteCount(videoId));
+                video.setFavorite(interactFeignService.isFavorite(u.getUserId(), videoId));
+                video.setCommentCount(interactFeignService.CommentCount(videoId));
 
-            videoList[i] = video;
+                videoList[finalI] = video;
+            }, ThreadPool.executor);
+            futureList.add(future);
         }
+
+        // 阻塞主线程等待，避免主线程提前返回结果，导致数据错误
+        CompletableFuture.allOf(futureList.toArray(new CompletableFuture[futureList.size()])).get();
         return videoList;
     }
 

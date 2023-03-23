@@ -38,7 +38,13 @@ public class MessageController {
             @RequestParam("token") String token,
             @RequestParam("to_user_id") long toUserId) throws ParseException {
         long fromUserId = basicFeignService.getUserIdByToken(token);
-        Message[] messageList = messageService.getMessageList(fromUserId, toUserId);
+        Message[] messageList = new Message[0];
+        try {
+            messageList = messageService.getMessageList(fromUserId, toUserId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return MessageVo.fail();
+        }
         MessageVo success = MessageVo.success();
         success.setMessageList(messageList);
         return success;

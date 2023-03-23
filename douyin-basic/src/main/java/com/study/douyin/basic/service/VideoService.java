@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * 视频
@@ -16,9 +17,9 @@ public interface VideoService extends IService<VideoEntity> {
 
     List<VideoEntity> searchVideosByUserId(int userId);
 
-    Video[] listVideoList(UserEntity user);
+    Video[] listVideoList(UserEntity user) throws Exception;
 
-    Video[] getVideoListByVideoIds(List<Integer> videoIds, String token);
+    Video[] getVideoListByVideoIds(List<Integer> videoIds, String token) throws Exception;
 
     /**
      * 将视频文件保存到指定文件夹

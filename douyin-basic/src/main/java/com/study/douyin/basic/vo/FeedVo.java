@@ -35,7 +35,7 @@ public class FeedVo {
      * 视频列表
      */
     @Setter(onMethod_ = {@JsonProperty("video_list")})
-    private List<Video> videoList;
+    private Video[] videoList;
 
     public static FeedVo success() {
         FeedVo feedVo = new FeedVo();
