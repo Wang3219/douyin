@@ -50,3 +50,7 @@
   - kafka
   - 抽取公共模块
   - ...
+
+
+## 运行
+  修改application.yml中关于mysql、redis、nacos以及oss相关配置为自己账户密码端口后启动nacos和redis即可运行。
