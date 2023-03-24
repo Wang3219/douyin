@@ -27,15 +27,14 @@ public interface VideoService extends IService<VideoEntity> {
      * @param data
      * @throws IOException
      */
-    void fetchVideoToFile(String videoTargetFile, MultipartFile data) throws IOException;
+    String fetchVideoToFile(String videoTargetFile, MultipartFile data) throws IOException;
 
     /**
      * 截取视频文件某一帧，将其保存到指定文件夹
      * @param videoFile
      * @param targetFile
-     * @param frameNum
      */
-    void fetchFrameToFile(String videoFile, String targetFile, int frameNum);
+    String fetchFrameToFile(String videoFile, String targetFile);
 
     void saveVideoMsg(int userId, String videoPath, String coverPath, String title);
 }

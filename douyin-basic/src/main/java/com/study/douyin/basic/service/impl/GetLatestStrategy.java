@@ -33,7 +33,6 @@ public class GetLatestStrategy implements Strategy {
      * @param timestamp
      * @return
      */
-    @Cacheable(value = "video", key = "#root.methodName", sync = true)
     @Override
     public List<VideoEntity> getVideo(Timestamp timestamp) {
         QueryWrapper<VideoEntity> queryWrapper = new QueryWrapper<>();

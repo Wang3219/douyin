@@ -83,6 +83,13 @@
             <artifactId>spring-boot-starter-cache</artifactId>
         </dependency>
 
+<!--        oss-->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alicloud-oss</artifactId>
+            <version>2.1.0.RELEASE</version>
+        </dependency>
+
     </dependencies>
     <dependencyManagement>
         <dependencies>

@@ -28,14 +28,8 @@ import java.util.concurrent.ExecutionException;
 @RequestMapping("/publish")
 public class PublishController {
 
-    @Value("${video-config.server-path}")
-    private String SERVER_PATH;
-
     @Value("${video-config.video-save-path}")
     private String VIDEO_PATH;
-
-    @Value("${video-config.frame-num}")
-    private int FRAME_NUM;
 
     @Value("${video-config.video-cover-save-path}")
     private String VIDEO_COVER_PATH;
@@ -102,36 +96,16 @@ public class PublishController {
         }
         // 生成视频名称
         String filename= UUID.randomUUID().toString();
-        String resource = ResourceUtils.getURL("classpath:").getPath()+"static/";
-        //String resource = this.getClass().getClassLoader().getResource("static/").getFile();
-        //保存视频进本地
-        String videosPath = resource + VIDEO_PATH;
-        String videosFolderPath = URLDecoder.decode(videosPath, "UTF-8");
-        videosFolderPath = videosFolderPath.substring(1);
-        File videosFolder=new File(videosFolderPath);
-        if (!videosFolder.exists()) {//如果不存在该文件夹，则创建
-            videosFolder.mkdir();
-        }
-        //String videoTargetPath=staticPath+VIDEO_PATH+ File.separator+filename+DEFAULT_VIDEO_FORMAT;
-        String videoTargetPath=videosFolderPath + File.separator+filename+DEFAULT_VIDEO_FORMAT;
-        videoService.fetchVideoToFile(videoTargetPath, data);
+        // 视频保存路径
+        String videoTargetPath = VIDEO_PATH + "/" +filename+DEFAULT_VIDEO_FORMAT;
+        String videoPath = videoService.fetchVideoToFile(videoTargetPath, data);
 
         //保存封面进本地
-        String coversPath = resource + VIDEO_COVER_PATH;
-        String coversFolderPath = URLDecoder.decode(coversPath, "UTF-8");
-        coversFolderPath = coversFolderPath.substring(1);
-        File coversFolder=new File(coversFolderPath);
-        if (!coversFolder.exists()) {//如果不存在该文件夹则创建
-            coversFolder.mkdir();
-        }
-        //String coverTargetPath=staticPath+VIDEO_COVER_PATH+File.separator+filename+DEFAULT_IMG_FORMAT;
-        String coverTargetPath=coversFolderPath+File.separator+filename+DEFAULT_IMG_FORMAT;
-        videoService.fetchFrameToFile(videoTargetPath, coverTargetPath, FRAME_NUM);
+        // 封面路径
+        String coverTargetPath=VIDEO_COVER_PATH + "/" + filename+DEFAULT_IMG_FORMAT;
+        String coverPath = videoService.fetchFrameToFile(videoPath, coverTargetPath);
 
         //向mysql中存入视频数据
-        String videoPath=SERVER_PATH+VIDEO_PATH+File.separator+filename+DEFAULT_VIDEO_FORMAT;
-        String coverPath=SERVER_PATH+VIDEO_COVER_PATH+File.separator+filename+DEFAULT_IMG_FORMAT;
-        //coverPath="https://t7.baidu.com/it/u=4162611394,4275913936&fm=193&f=GIF";
         videoService.saveVideoMsg(userId, videoPath, coverPath, title);
 
         return ActionVo.success();

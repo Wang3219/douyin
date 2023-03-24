@@ -1,5 +1,6 @@
 package com.study.douyin.basic.service.impl;
 
+import com.aliyun.oss.OSS;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.study.douyin.basic.dao.VideoDao;
@@ -17,6 +18,7 @@ import org.bytedeco.javacv.FFmpegFrameGrabber;
 import org.bytedeco.javacv.Frame;
 import org.bytedeco.javacv.Java2DFrameConverter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -24,15 +26,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 
 @Slf4j
@@ -47,6 +50,12 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
 
     @Autowired
     private InteractFeignService interactFeignService;
+
+    @Autowired
+    private OSS oss;
+
+    @Value("${spring.cloud.alicloud.oss.bucket-name}")
+    private String bucketName;
 
     private static final String DEFAULT_IMG_FORMAT = "jpg";
 
@@ -157,25 +166,28 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
     }
 
     @Override
-    public void fetchVideoToFile(String videoTargetFile, MultipartFile data) throws IOException {
-        data.transferTo(new File(videoTargetFile));
+    public String fetchVideoToFile(String videoTargetFile, MultipartFile data) throws IOException {
+        // 将视频保存到oss
+        oss.putObject(bucketName, videoTargetFile, new ByteArrayInputStream(data.getBytes()));
+        Date date = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7);
+        String url = oss.generatePresignedUrl(bucketName, videoTargetFile, date).toString();
         log.info("视频保存成功："+videoTargetFile);
+        return url;
     }
 
     @Override
-    public void fetchFrameToFile(String videoFile, String targetFile, int frameNum) {
+    public String fetchFrameToFile(String videoFile, String targetFile) {
         try {
-            File frameFile = new File(targetFile);
             FFmpegFrameGrabber ff = new FFmpegFrameGrabber(videoFile);
             ff.start();
             int length = ff.getLengthInFrames();
-            //*第几帧判断设置*//*
-            if (frameNum < 0) {
-                frameNum = 0;
-            }
-            if (frameNum > length) {
-                frameNum = length - 5;
-            }
+//            //*第几帧判断设置*//*
+//            if (frameNum < 0) {
+//                frameNum = 0;
+//            }
+//            if (frameNum > length) {
+//                frameNum = length - 5;
+//            }
             int i = 0;
             Frame f = null;
             while (i < length) {
@@ -207,20 +219,25 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
 //            }
             Java2DFrameConverter converter = new Java2DFrameConverter();
             BufferedImage bi = converter.getBufferedImage(f);
-            ImageIO.write(bi, DEFAULT_IMG_FORMAT, frameFile);
+
+            // 将封面保存到oss
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ImageIO.write(bi, DEFAULT_IMG_FORMAT, os);
+            oss.putObject(bucketName, targetFile, new ByteArrayInputStream(os.toByteArray()));
+            Date date = new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7);
+            String url = oss.generatePresignedUrl(bucketName, targetFile, date).toString();
+
             ff.stop();
             ff.close();
-            log.info("视频封面保存成功："+targetFile);
+            log.info("视频封面保存成功："+url);
+            return url;
         } catch (Exception e) {
             throw new RuntimeException("转换视频图片异常");
         }
     }
 
-    // 失效模式，投稿发布更新数据库后删除“当前用户发布的视频列表”和“feed流返回视频列表”缓存数据
-    @Caching(evict = {
-            @CacheEvict(value = "video", key = "#userId"),
-            @CacheEvict(value = "video", key = "'getVideo'")
-    })
+    // 失效模式，投稿发布更新数据库后删除“当前用户发布的视频列表”缓存数据
+    @CacheEvict(value = "video", key = "#userId")
     @Override
     public void saveVideoMsg(int userId, String videoPath, String coverPath, String title) {
         VideoEntity video = new VideoEntity();

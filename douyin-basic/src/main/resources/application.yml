@@ -8,10 +8,14 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
+    alicloud:
+      access-key:
+      secret-key:
+      oss:
+        endpoint: oss-cn-chengdu.aliyuncs.com
+        bucket-name: douyin-simple
   application:
     name: douyin-basic
-  resources:
-    static-locations: classpath:static/
   redis:
     host: 127.0.0.1
     port: 6379
@@ -36,13 +40,9 @@ server:
 
 ## 视频配置
 video-config:
-  ##Server地址前缀
-  server-path: http://192.168.1.106:10010/ # your server-path
   ##视频保存路径
   video-save-path: videos #your target folder name
   ##视频封面保存路径
   video-cover-save-path: covers #your target folder name
-  ##配置封面截取第几帧
-  frame-num: 1
   ##feed流至多返回多少条视频
   feed-video-max-num: 15

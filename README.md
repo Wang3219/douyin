@@ -42,11 +42,11 @@
   + Nacos
   + Mybatis-plus(mysql8.0)
   + SpringCache(Redis)
-  + CompletableFuture
+  + CompletableFuture 
+  + OSS
 
 
 ## 待优化
   - kafka
-  - oss存储视频和封面
   - 抽取公共模块
   - ...
