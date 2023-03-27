@@ -48,9 +48,10 @@
 
 ## 待优化
   - kafka
+  - Jwt
   - 抽取公共模块
   - ...
 
 
 ## 运行
-  安装android/app-release.apk后双击右下角我的修改端口为服务器端口，ip为88。并修改application.yml中关于mysql、redis、nacos以及oss相关配置为自己账户密码端口后启动nacos和redis即可运行。
+  安装android/app-release.apk后双击右下角我的修改ip为服务器ip，端口为88。并修改application.yml中关于mysql、redis、nacos以及oss相关配置为自己账户密码端口后启动nacos和redis即可运行。
