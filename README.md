@@ -44,13 +44,27 @@
   + SpringCache(Redis)
   + CompletableFuture 
   + OSS
+  + kafka
 
 
 ## 待优化
-  - kafka
   - Jwt
   - 抽取公共模块
   - ...
+
+## 环境配置
+
+**1. kafka**
+
+- 参考文章：[Windows下 kafka安装及使用](https://blog.csdn.net/weixin_42838061/article/details/123953574?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-0-123953574-blog-126481448.235^v27^pc_relevant_recovery_v2&spm=1001.2101.3001.4242.1&utm_relevant_index=3)
+
+**2. Redis**
+
+- 参考文章：[Windows下Redis的安装和配置](https://blog.csdn.net/weixin_41381863/article/details/88231397?spm=1001.2101.3001.6661.1&utm_medium=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-88231397-blog-126552221.235%5Ev27%5Epc_relevant_recovery_v2&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-88231397-blog-126552221.235%5Ev27%5Epc_relevant_recovery_v2&utm_relevant_index=1)
+
+**3. Redis**
+
+- 参考文章：[Windows下nacos单机模式部署](https://blog.csdn.net/KingCruel/article/details/127424002)
 
 
 ## 运行

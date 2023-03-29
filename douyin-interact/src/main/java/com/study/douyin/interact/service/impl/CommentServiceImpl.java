@@ -1,5 +1,6 @@
 package com.study.douyin.interact.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.study.douyin.interact.dao.CommentDao;
@@ -12,6 +13,7 @@ import com.study.douyin.interact.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -26,6 +28,9 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
 
     @Autowired
     private BasicFeignService basicFeignService;
+
+    @Autowired
+    private KafkaTemplate<String, Object> kafkaTemplate;
 
     @Override
     public Integer countByVideoId(Integer videoId) {
@@ -58,12 +63,16 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
             commentEntity.setVideoId(videoId);
             commentEntity.setCommentText(commentText);
             commentEntity.setCreateDate(new Date());
-            this.save(commentEntity);
+            // this.save(commentEntity);
+            // 加入kafka消息队列 topic为commentQueue
+            kafkaTemplate.send("commentQueue",JSON.toJSONString(commentEntity));
         } else if (actionType == 2) {
             commentEntity = this.getById(commentId);
             // 若评论存在且是当前用户发布的，才可以删除
             if (commentEntity != null && commentEntity.getUserId() == user.getId())
-                this.removeById(commentId);
+                //this.removeById(commentId);
+                // 加入kafka消息队列 topic为 removeCommentQueue
+                kafkaTemplate.send("removeCommentQueue",JSON.toJSONString(commentId));
             // 若当前评论不存在则删除出错
             else
                 return null;

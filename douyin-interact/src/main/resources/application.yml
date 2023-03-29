@@ -21,6 +21,23 @@ spring:
       use-key-prefix: true
       # 设置缓存过期时间
       time-to-live: 3600000
+  #配置Kafka
+  kafka:
+    bootstrap-servers: 127.0.0.1:9092
+    producer: # 生产者
+      retries: 3 # 失败重试次数
+      batch-size: 16384
+      buffer-memory: 33554432
+      acks: 1
+      # 指定消息key和消息体的编解码方式
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: default-group # 消费组
+      enable-auto-commit: true
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml

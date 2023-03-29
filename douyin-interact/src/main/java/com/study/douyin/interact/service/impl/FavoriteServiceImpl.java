@@ -1,5 +1,6 @@
 package com.study.douyin.interact.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.study.douyin.interact.dao.FavoriteDao;
@@ -10,6 +11,7 @@ import com.study.douyin.interact.vo.Video;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +22,9 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteDao, FavoriteEntity
 
     @Autowired
     private BasicFeignService basicFeignService;
+
+    @Autowired
+    private KafkaTemplate<String, Object> kafkaTemplate;
 
     @CacheEvict(value = "favorite", key = "#userId")
     @Override
@@ -41,13 +46,17 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteDao, FavoriteEntity
 
             int count = 0;
             // 没点过赞才插入数据
-            if (entity == null)
-                count = baseMapper.insert(favoriteEntity);
-            return count == 1;
+            if (entity == null){
+                //count = baseMapper.insert(favoriteEntity);
+                kafkaTemplate.send("favoriteQueue", JSON.toJSONString(favoriteEntity));
+                return true;
+            } else
+                return false;
         } else if (actionType == 2) {
             // 取消点赞
-            int count = baseMapper.delete(new QueryWrapper<FavoriteEntity>().eq("user_id", userId).eq("video_id", videoId));
-            return count == 1;
+            //int count = baseMapper.delete(new QueryWrapper<FavoriteEntity>().eq("user_id", userId).eq("video_id", videoId));
+            kafkaTemplate.send("removeFavoriteQueue", JSON.toJSONString(videoId+":"+userId));
+            return true;
         }
         // actionType的值不合法
         return false;
