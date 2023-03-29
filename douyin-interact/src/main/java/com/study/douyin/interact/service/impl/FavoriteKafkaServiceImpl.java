@@ -9,6 +9,7 @@ import com.study.douyin.interact.entity.FavoriteEntity;
 import com.study.douyin.interact.service.FavoriteKafkaService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ import java.util.Optional;
  * @Date: 2023/03/29/17:28
  * @Description:
  */
+@Service
 public class FavoriteKafkaServiceImpl extends ServiceImpl<FavoriteDao, FavoriteEntity> implements FavoriteKafkaService {
 
     @KafkaListener(topics = "favoriteQueue")
