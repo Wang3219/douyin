@@ -62,7 +62,7 @@
 
 - 参考文章：[Windows下Redis的安装和配置](https://blog.csdn.net/weixin_41381863/article/details/88231397?spm=1001.2101.3001.6661.1&utm_medium=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-88231397-blog-126552221.235%5Ev27%5Epc_relevant_recovery_v2&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-88231397-blog-126552221.235%5Ev27%5Epc_relevant_recovery_v2&utm_relevant_index=1)
 
-**3. Redis**
+**3. Nacos**
 
 - 参考文章：[Windows下nacos单机模式部署](https://blog.csdn.net/KingCruel/article/details/127424002)
 
