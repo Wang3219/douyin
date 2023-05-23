@@ -7,7 +7,7 @@ import com.study.douyin.interact.vo.Video;
 public interface FavoriteService extends IService<FavoriteEntity> {
     boolean action(int userId, Integer videoId, Integer actionType);
 
-    Video[] favoriteList(Integer userId, String token);
+    Video[] favoriteList(Integer userId, Integer id);
 
     Integer countByVideoId(Integer videoId);
 

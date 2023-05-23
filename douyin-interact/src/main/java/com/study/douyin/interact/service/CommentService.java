@@ -9,8 +9,8 @@ import java.util.concurrent.ExecutionException;
 public interface CommentService extends IService<CommentEntity> {
     Integer countByVideoId(Integer videoId);
 
-    Comment PostComment(String token, int videoId, int actionType, String commentText, Integer commentId);
+    Comment PostComment(int userId, int videoId, int actionType, String commentText, Integer commentId);
 
-    Comment[] getCommentList(String token, int videoId) throws Exception;
+    Comment[] getCommentList(int userId, int videoId) throws Exception;
 
 }

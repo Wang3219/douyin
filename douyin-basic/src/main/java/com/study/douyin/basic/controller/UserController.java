@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.study.douyin.basic.entity.UserEntity;
 import com.study.douyin.basic.feign.SocializeFeignService;
 import com.study.douyin.basic.service.UserService;
+import com.study.douyin.basic.vo.FeedVo;
 import com.study.douyin.basic.vo.User;
 import com.study.douyin.basic.vo.UserInfoVo;
 import com.study.douyin.basic.vo.UserVo;
+import com.study.douyin.common.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +38,7 @@ public class UserController {
         // 注册成功
         UserVo userVo = UserVo.success();
         userVo.setUserid(user.getUserId());
-        userVo.setToken(user.getPassword());
+        userVo.setToken(JwtUtils.createJwtTokenByUser(user.getUserId()));
         return userVo;
     }
 
@@ -50,14 +52,15 @@ public class UserController {
         //登陆成功
         UserVo userVo = UserVo.success();
         userVo.setUserid(user.getUserId());
-        userVo.setToken(user.getPassword());
+        userVo.setToken(JwtUtils.createJwtTokenByUser(user.getUserId()));
         return userVo;
     }
 
     @GetMapping("/")
     public UserInfoVo userInfo(@RequestParam("user_id") Integer userId, @RequestParam("token") String token) {
+        if (!JwtUtils.verifyTokenOfUser(token))
+            return UserInfoVo.fail();
         //通过userId获得对应用户数据
-        UserEntity u = userService.getOne(new QueryWrapper<UserEntity>().eq("password", token));
         UserEntity user = userService.getById(userId);
 
         if (user != null) {
@@ -65,7 +68,7 @@ public class UserController {
             success.setUser(new User());
 
             //填入参数
-            success.getUser().setFollow(socializeFeignService.isFollow(userId, u.getUserId()));
+            success.getUser().setFollow(socializeFeignService.isFollow(userId, JwtUtils.getUserId(token)));
             success.getUser().setFollowCount(user.getFollowCount());
             success.getUser().setFollowerCount(user.getFollowerCount());
             success.getUser().setId(user.getUserId());
@@ -75,18 +78,6 @@ public class UserController {
         } else {
             return UserInfoVo.fail();
         }
-    }
-
-    @GetMapping("/getUserIdByToken")
-    public Integer getUserIdByToken(@RequestParam("token") String token) {
-        int userId = userService.getUserIdByToken(token);
-        return userId;
-    }
-
-    @GetMapping("/getUserByToken")
-    public User getUserByToken(@RequestParam("token") String token) {
-        User user = userService.getUserByToken(token);
-        return user;
     }
 
     @GetMapping("/getUserById")

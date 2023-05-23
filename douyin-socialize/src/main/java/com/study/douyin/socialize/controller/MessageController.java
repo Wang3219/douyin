@@ -1,5 +1,6 @@
 package com.study.douyin.socialize.controller;
 
+import com.study.douyin.common.utils.JwtUtils;
 import com.study.douyin.socialize.feign.BasicFeignService;
 import com.study.douyin.socialize.service.MessageService;
 import com.study.douyin.socialize.vo.Message;
@@ -26,7 +27,9 @@ public class MessageController {
             @RequestParam("to_user_id") long toUserId,
             @RequestParam("action_type") int actionType,
             @RequestParam("content") String content) {
-        long fromUserId = basicFeignService.getUserIdByToken(token);
+        if (!JwtUtils.verifyTokenOfUser(token))
+            return MessageVo.fail();
+        long fromUserId = JwtUtils.getUserId(token);
         boolean flag = messageService.action(fromUserId, toUserId, actionType, content);
         if (flag)
             return MessageVo.success();
@@ -37,7 +40,9 @@ public class MessageController {
     public MessageVo chat(
             @RequestParam("token") String token,
             @RequestParam("to_user_id") long toUserId) throws ParseException {
-        long fromUserId = basicFeignService.getUserIdByToken(token);
+        if (!JwtUtils.verifyTokenOfUser(token))
+            return MessageVo.fail();
+        long fromUserId = JwtUtils.getUserId(token);
         Message[] messageList = new Message[0];
         try {
             messageList = messageService.getMessageList(fromUserId, toUserId);

@@ -1,7 +1,9 @@
 package com.study.douyin.interact.controller;
 
+import com.study.douyin.common.utils.JwtUtils;
 import com.study.douyin.interact.feign.BasicFeignService;
 import com.study.douyin.interact.service.FavoriteService;
+import com.study.douyin.interact.vo.CommentVo;
 import com.study.douyin.interact.vo.FavoriteVo;
 import com.study.douyin.interact.vo.Video;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,9 @@ public class FavoriteController {
      */
     @PostMapping("/action")
     public FavoriteVo action(@RequestParam("token") String token, @RequestParam("video_id") Integer videoId, @RequestParam("action_type") Integer actionType) {
-        int userId = basicFeignService.getUserIdByToken(token);
+        if (!JwtUtils.verifyTokenOfUser(token))
+            return FavoriteVo.fail();
+        int userId = JwtUtils.getUserId(token);
         boolean flag = favoriteService.action(userId, videoId, actionType);
 
         if (flag)
@@ -43,7 +47,10 @@ public class FavoriteController {
      */
     @GetMapping("/list")
     public FavoriteVo list(@RequestParam("user_id") Integer userId, @RequestParam("token") String token) {
-        Video[] videolist = favoriteService.favoriteList(userId, token);
+        if (!JwtUtils.verifyTokenOfUser(token))
+            return FavoriteVo.fail();
+        int id = JwtUtils.getUserId(token);
+        Video[] videolist = favoriteService.favoriteList(userId, id);
         FavoriteVo success = FavoriteVo.success();
         success.setVideoList(videolist);
         return success;

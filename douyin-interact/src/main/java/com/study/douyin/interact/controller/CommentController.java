@@ -1,5 +1,6 @@
 package com.study.douyin.interact.controller;
 
+import com.study.douyin.common.utils.JwtUtils;
 import com.study.douyin.interact.service.CommentService;
 import com.study.douyin.interact.vo.Comment;
 import com.study.douyin.interact.vo.CommentVo;
@@ -34,7 +35,10 @@ public class CommentController {
             @RequestParam("action_type") int actionType,
             @RequestParam(value = "comment_text", required = false) String commentText,
             @RequestParam(value = "comment_id", required = false) Integer commentId) {
-        Comment comment = commentService.PostComment(token, videoId, actionType, commentText, commentId);
+        if (!JwtUtils.verifyTokenOfUser(token))
+            return CommentVo.fail();
+        int userId = JwtUtils.getUserId(token);
+        Comment comment = commentService.PostComment(userId, videoId, actionType, commentText, commentId);
 
         // 若返回null则表示出错
         if (comment == null)
@@ -54,8 +58,11 @@ public class CommentController {
     @GetMapping("/list")
     public CommentVo GetCommentList(@RequestParam("token") String token, @RequestParam("video_id") int videoId) {
         Comment[] commentList = new Comment[0];
+        if (!JwtUtils.verifyTokenOfUser(token))
+            return CommentVo.fail();
+        int userId = JwtUtils.getUserId(token);
         try {
-            commentList = commentService.getCommentList(token, videoId);
+            commentList = commentService.getCommentList(userId, videoId);
         } catch (Exception e) {
             e.printStackTrace();
             return CommentVo.fail();

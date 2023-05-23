@@ -10,16 +10,12 @@ import java.util.List;
 
 @FeignClient("douyin-basic")
 public interface BasicFeignService {
-    @GetMapping("/user/getUserIdByToken")
-    Integer getUserIdByToken(@RequestParam("token") String token);
-
-    @GetMapping("/user/getUserByToken")
-    User getUserByToken(@RequestParam("token") String token);
-
     @GetMapping("/user/getUserById")
     User getUserById(@RequestParam("userId") int userId, @RequestParam("followId") int followId);
 
     @GetMapping("/publish/videoList")
-    Video[] videoList(@RequestParam("videoIds") List<Integer> videoIds, @RequestParam("token") String token);
+    Video[] videoList(@RequestParam("videoIds") List<Integer> videoIds, @RequestParam("id") int id);
 
+    @GetMapping("/publish/getUserIdByVideoId")
+    int getUserIdByVideoId(@RequestParam("videoId") int videoId);
 }

@@ -67,34 +67,6 @@ public class UserServiceImpl extends ServiceImpl<UserDao, UserEntity> implements
     }
 
     @Override
-    public Integer getUserIdByToken(String token) {
-        if (StringUtils.isEmpty(token))
-            return -1;
-        UserEntity user = this.getOne(new QueryWrapper<UserEntity>().eq("password", token));
-        // 不存在此token对应的user
-        if (user == null)
-            return -1;
-        return user.getUserId();
-    }
-
-    @Override
-    public User getUserByToken(String token) {
-        if (StringUtils.isEmpty(token))
-            return null;
-        UserEntity userEntity = this.getOne(new QueryWrapper<UserEntity>().eq("password", token));
-        User user = new User();
-        // user存在
-        if (userEntity != null) {
-            user.setId(userEntity.getUserId());
-            user.setName(userEntity.getUsername());
-            user.setFollowCount(userEntity.getFollowCount());
-            user.setFollowerCount(userEntity.getFollowerCount());
-            user.setFollow(socializeFeignService.isFollow((int) user.getId(), (int) user.getId()));
-        }
-        return user;
-    }
-
-    @Override
     public User getUserById(int userId, int followId) {
         UserEntity userEntity = this.getById(userId);
         User user = new User();

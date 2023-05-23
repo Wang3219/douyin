@@ -3,10 +3,8 @@ package com.study.douyin.basic.controller;
 import com.study.douyin.basic.entity.UserEntity;
 import com.study.douyin.basic.service.UserService;
 import com.study.douyin.basic.service.VideoService;
-import com.study.douyin.basic.vo.ActionVo;
-import com.study.douyin.basic.vo.PublishVo;
-import com.study.douyin.basic.vo.UserVo;
-import com.study.douyin.basic.vo.Video;
+import com.study.douyin.basic.vo.*;
+import com.study.douyin.common.utils.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,12 +43,13 @@ public class PublishController {
 
     @GetMapping("/list")
     public PublishVo list(@RequestParam("token") String token, @RequestParam("user_id") int userId) {
-
+        if (!JwtUtils.verifyTokenOfUser(token))
+            return PublishVo.fail();
         // 查询当前用户信息
         UserEntity user = userService.getById(userId);
 
         // 如果用户存在则成功
-        if (user != null && token.equals(user.getPassword())) {
+        if (user != null) {
             // 获取所有需要返回的视频以及视频作者信息
             Video[] videoList = new Video[0];
             try {
@@ -74,10 +73,10 @@ public class PublishController {
      * @return
      */
     @GetMapping("/videoList")
-    public Video[] videoList(@RequestParam("videoIds") List<Integer> videoIds, @RequestParam("token") String token) {
+    public Video[] videoList(@RequestParam("videoIds") List<Integer> videoIds, @RequestParam("id") int id) {
         Video[] videoList = new Video[0];
         try {
-            videoList = videoService.getVideoListByVideoIds(videoIds, token);
+            videoList = videoService.getVideoListByVideoIds(videoIds, id);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -88,9 +87,10 @@ public class PublishController {
     @PostMapping("/action")
    public ActionVo action(@RequestParam("data") MultipartFile data, @RequestParam("token") String token,
                         @RequestParam("title") String title, HttpSession session) throws IOException {
-
+        if (!JwtUtils.verifyTokenOfUser(token))
+            return ActionVo.fail();
         // 通过token获取用户id
-        int userId = userService.getUserIdByToken(token);
+        int userId = JwtUtils.getUserId(token);
         if (userId == 0){
             return ActionVo.fail();
         }
@@ -110,4 +110,9 @@ public class PublishController {
 
         return ActionVo.success();
    }
+
+    @GetMapping("/getUserIdByVideoId")
+    public int getUserIdByVideoId(@RequestParam("videoId") int videoId) {
+        return videoService.getById(videoId).getUserId();
+    }
 }

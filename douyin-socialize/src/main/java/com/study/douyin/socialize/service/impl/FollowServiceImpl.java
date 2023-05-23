@@ -40,8 +40,8 @@ public class FollowServiceImpl extends ServiceImpl<FollowDao, FollowEntity> impl
     })
     @Override
     public boolean action(int userId, Integer toUserId, Integer actionType) {
-        // 当前token对应的user不存在
-        if (userId == -1)
+        // 当前userId对应的user不存在
+        if (userId == 0)
             return false;
         // 数据库变化行数
         int count = 0;
@@ -67,14 +67,13 @@ public class FollowServiceImpl extends ServiceImpl<FollowDao, FollowEntity> impl
     /**
      * 获取关注列表
      * @param userId
-     * @param token
+     * @param id
      * @return
      */
     @Cacheable(value = "follow", key = "#userId", sync = true)
     @Override
-    public User[] getFollowList(Integer userId, String token) {
-        // 判断userId和token是否匹配
-        Integer id = basicFeignService.getUserIdByToken(token);
+    public User[] getFollowList(Integer userId, Integer id) {
+        // 判断userId和id是否匹配
         if (userId != id)
             return null;
 
@@ -97,14 +96,13 @@ public class FollowServiceImpl extends ServiceImpl<FollowDao, FollowEntity> impl
     /**
      * 获取粉丝列表
      * @param userId
-     * @param token
+     * @param id
      * @return
      */
     @Cacheable(value = "follower", key = "#userId", sync = true)
     @Override
-    public User[] getFollowerList(Integer userId, String token) {
-        // 判断userId和token是否匹配
-        Integer id = basicFeignService.getUserIdByToken(token);
+    public User[] getFollowerList(Integer userId, Integer id) {
+        // 判断userId和id是否匹配
         if (userId != id)
             return null;
 
@@ -127,14 +125,13 @@ public class FollowServiceImpl extends ServiceImpl<FollowDao, FollowEntity> impl
     /**
      * 获取好友列表
      * @param userId
-     * @param token
+     * @param id
      * @return
      */
     @Cacheable(value = "friend", key = "#userId", sync = true)
     @Override
-    public User[] getFriendList(Integer userId, String token) {
-        // 判断userId和token是否匹配
-        Integer id = basicFeignService.getUserIdByToken(token);
+    public User[] getFriendList(Integer userId, Integer id) {
+        // 判断userId和id是否匹配
         if (userId != id)
             return null;
 

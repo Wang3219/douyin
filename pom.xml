@@ -15,6 +15,7 @@
         <module>douyin-interact</module>
         <module>douyin-socialize</module>
         <module>douyin-gateway</module>
+        <module>douyin-common</module>
     </modules>
 
 </project>

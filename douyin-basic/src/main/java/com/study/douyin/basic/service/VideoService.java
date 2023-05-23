@@ -19,7 +19,7 @@ public interface VideoService extends IService<VideoEntity> {
 
     Video[] listVideoList(UserEntity user) throws Exception;
 
-    Video[] getVideoListByVideoIds(List<Integer> videoIds, String token) throws Exception;
+    Video[] getVideoListByVideoIds(List<Integer> videoIds, int id) throws Exception;
 
     /**
      * 将视频文件保存到指定文件夹

@@ -1,9 +1,11 @@
 package com.study.douyin.socialize.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.study.douyin.common.utils.JwtUtils;
 import com.study.douyin.socialize.entity.FollowEntity;
 import com.study.douyin.socialize.feign.BasicFeignService;
 import com.study.douyin.socialize.service.FollowService;
+import com.study.douyin.socialize.vo.MessageVo;
 import com.study.douyin.socialize.vo.RelationVo;
 import com.study.douyin.socialize.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,9 @@ public class RelationController {
     @PostMapping("/action")
     public RelationVo action(@RequestParam("token") String token, @RequestParam("to_user_id") Integer toUserId, @RequestParam("action_type") Integer actionType) {
         // 获取当前用户id
-        int userId = basicFeignService.getUserIdByToken(token);
+        if (!JwtUtils.verifyTokenOfUser(token))
+            return RelationVo.fail();
+        int userId = JwtUtils.getUserId(token);
         boolean flag = followService.action(userId, toUserId, actionType);
         if (flag)
             return RelationVo.success();
@@ -50,7 +54,10 @@ public class RelationController {
      */
     @GetMapping("/follow/list")
     public RelationVo getFollowList(@RequestParam("user_id") Integer userId, @RequestParam("token") String token) {
-        User[] userList = followService.getFollowList(userId, token);
+        if (!JwtUtils.verifyTokenOfUser(token))
+            return RelationVo.fail();
+        int id = JwtUtils.getUserId(token);
+        User[] userList = followService.getFollowList(userId, id);
         if (userList == null)
             return RelationVo.fail();
         RelationVo success = RelationVo.success();
@@ -66,7 +73,10 @@ public class RelationController {
      */
     @GetMapping("/follower/list")
     public RelationVo getFollowerList(@RequestParam("user_id") Integer userId, @RequestParam("token") String token) {
-        User[] userList = followService.getFollowerList(userId, token);
+        if (!JwtUtils.verifyTokenOfUser(token))
+            return RelationVo.fail();
+        int id = JwtUtils.getUserId(token);
+        User[] userList = followService.getFollowerList(userId, id);
         if (userList == null)
             return RelationVo.fail();
         RelationVo success = RelationVo.success();
@@ -82,7 +92,10 @@ public class RelationController {
      */
     @GetMapping("/friend/list")
     public RelationVo getFriendList(@RequestParam("user_id") Integer userId, @RequestParam("token") String token) {
-        User[] userList = followService.getFriendList(userId, token);
+        if (!JwtUtils.verifyTokenOfUser(token))
+            return RelationVo.fail();
+        int id = JwtUtils.getUserId(token);
+        User[] userList = followService.getFriendList(userId, id);
         if (userList == null)
             return RelationVo.fail();
         RelationVo success = RelationVo.success();

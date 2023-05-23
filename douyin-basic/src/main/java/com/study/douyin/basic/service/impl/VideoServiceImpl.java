@@ -119,7 +119,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
     }
 
     @Override
-    public Video[] getVideoListByVideoIds(List<Integer> videoIds, String token) throws Exception {
+    public Video[] getVideoListByVideoIds(List<Integer> videoIds, int id) throws Exception {
         Video[] videoList = new Video[videoIds.size()];
         List<CompletableFuture> futureList = new ArrayList<>();
         for (int i=0; i < videoIds.size(); i++) {
@@ -134,16 +134,13 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
                 int userId = videoEntity.getUserId();
                 UserEntity user = userService.getById(userId);
 
-                // 获取当前用户信息
-                UserEntity u = userService.getOne(new QueryWrapper<UserEntity>().eq("password", token));
-
                 // 封装数据
                 User author = new User();
                 author.setId(userId);
                 author.setName(user.getUsername());
                 author.setFollowCount(user.getFollowCount());
                 author.setFollowerCount(user.getFollowerCount());
-                author.setFollow(socializeFeignService.isFollow(userId, u.getUserId()));
+                author.setFollow(socializeFeignService.isFollow(userId, id));
 
                 Video video = new Video();
                 video.setAuthor(author);
@@ -152,7 +149,7 @@ public class VideoServiceImpl extends ServiceImpl<VideoDao, VideoEntity> impleme
                 video.setCoverurl(videoEntity.getCoverUrl());
                 video.setPlayurl(videoEntity.getPlayUrl());
                 video.setFavoriteCount(interactFeignService.favoriteCount(videoId));
-                video.setFavorite(interactFeignService.isFavorite(u.getUserId(), videoId));
+                video.setFavorite(interactFeignService.isFavorite(id, videoId));
                 video.setCommentCount(interactFeignService.CommentCount(videoId));
 
                 videoList[finalI] = video;

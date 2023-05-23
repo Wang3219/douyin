@@ -3,6 +3,7 @@ package com.study.douyin.interact.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.study.douyin.common.utils.JwtUtils;
 import com.study.douyin.interact.dao.CommentDao;
 import com.study.douyin.interact.entity.CommentEntity;
 import com.study.douyin.interact.feign.BasicFeignService;
@@ -40,7 +41,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
 
     /**
      * 添加或删除评论
-     * @param token
+     * @param userId
      * @param videoId
      * @param actionType
      * @param commentText
@@ -49,10 +50,12 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
      */
     @CacheEvict(value = "comment", key = "#videoId")
     @Override
-    public Comment PostComment(String token, int videoId, int actionType, String commentText, Integer commentId) {
+    public Comment PostComment(int userId, int videoId, int actionType, String commentText, Integer commentId) {
+        // 获取视频作者id
+        int id = basicFeignService.getUserIdByVideoId(videoId);
         // 获取当前用户信息
-        User user = basicFeignService.getUserByToken(token);
-        // 当前token不存在user
+        User user = basicFeignService.getUserById(userId, id);
+        // 当前userId不存在user
         if (user == null)
             return null;
         CommentEntity commentEntity = new CommentEntity();
@@ -91,18 +94,13 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
 
     /**
      * 获取评论列表
-     * @param token
+     * @param userId
      * @param videoId
      * @return
      */
     @Cacheable(value = "comment", key = "#videoId", sync = true)
     @Override
-    public Comment[] getCommentList(String token, int videoId) throws Exception {
-        User user = basicFeignService.getUserByToken(token);
-        // 当前token不存在user
-        if (user == null)
-            return null;
-
+    public Comment[] getCommentList(int userId, int videoId) throws Exception {
         List<CommentEntity> comments = baseMapper.selectList(new QueryWrapper<CommentEntity>().eq("video_id", videoId));
         Comment[] commentList = new Comment[comments.size()];
 
@@ -114,7 +112,7 @@ public class CommentServiceImpl extends ServiceImpl<CommentDao, CommentEntity> i
                 Comment comment = new Comment();
                 CommentEntity commentEntity = comments.get(finalI);
 
-                User author = basicFeignService.getUserById(commentEntity.getUserId(), (int) user.getId());
+                User author = basicFeignService.getUserById(commentEntity.getUserId(), userId);
 
                 comment.setId(commentEntity.getCommentId());
                 comment.setContent(commentEntity.getCommentText());

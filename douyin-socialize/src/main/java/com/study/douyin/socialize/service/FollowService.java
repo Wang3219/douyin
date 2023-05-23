@@ -12,10 +12,10 @@ public interface FollowService extends IService<FollowEntity> {
 
     boolean action(int userId, Integer toUserId, Integer actionType);
 
-    User[] getFollowList(Integer userId, String token);
+    User[] getFollowList(Integer userId, Integer id);
 
-    User[] getFollowerList(Integer userId, String token);
+    User[] getFollowerList(Integer userId, Integer id);
 
-    User[] getFriendList(Integer userId, String token);
+    User[] getFriendList(Integer userId, Integer id);
 
 }

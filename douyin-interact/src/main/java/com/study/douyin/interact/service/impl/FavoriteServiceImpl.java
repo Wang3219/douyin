@@ -30,7 +30,7 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteDao, FavoriteEntity
     @Override
     public boolean action(int userId, Integer videoId, Integer actionType) {
         // 当前token对应的user不存在
-        if (userId == -1)
+        if (userId == 0)
             return false;
         if (actionType == 1) {
             // 点赞
@@ -64,14 +64,14 @@ public class FavoriteServiceImpl extends ServiceImpl<FavoriteDao, FavoriteEntity
 
     @Cacheable(value = "favorite", key = "#userId", sync = true)
     @Override
-    public Video[] favoriteList(Integer userId, String token) {
+    public Video[] favoriteList(Integer userId, Integer id) {
         // 获取该用户所有喜欢的视频的videoId
         List<FavoriteEntity> favoriteEntities = this.list(new QueryWrapper<FavoriteEntity>().eq("user_id", userId));
         List<Integer> videoIds = favoriteEntities.stream().map(entity -> {
             return entity.getVideoId();
         }).collect(Collectors.toList());
 
-        Video[] videoList = basicFeignService.videoList(videoIds, token);
+        Video[] videoList = basicFeignService.videoList(videoIds, id);
 
         return videoList;
     }
