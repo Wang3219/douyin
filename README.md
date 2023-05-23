@@ -44,11 +44,11 @@
   + SpringCache(Redis)
   + CompletableFuture 
   + OSS
-  + kafka
+  + Kafka
+  + JWT
 
 
 ## 待优化
-  - Jwt
   - 抽取公共模块
   - ...
 
