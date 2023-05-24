@@ -50,7 +50,7 @@
 
 ## 环境配置
 
-**1. kafka**
+**1. Kafka**
 
 - 参考文章：[Windows下 kafka安装及使用](https://blog.csdn.net/weixin_42838061/article/details/123953574?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-0-123953574-blog-126481448.235^v27^pc_relevant_recovery_v2&spm=1001.2101.3001.4242.1&utm_relevant_index=3)
 
@@ -64,4 +64,4 @@
 
 
 ## 运行
-  安装android/app-release.apk后双击右下角我的修改ip为服务器ip，端口为88。并修改application.yml中关于mysql、redis、nacos以及oss相关配置为自己账户密码端口后启动nacos和redis即可运行。
+  安装android/app-release.apk后双击右下角我的修改ip为服务器ip，端口为88。并修改application.yml中关于mysql、redis、kafka、nacos以及oss相关配置为自己账户密码端口后启动kafka、nacos和redis即可运行。
