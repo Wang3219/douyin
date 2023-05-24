@@ -1,6 +1,6 @@
 package com.study.douyin.interact.controller;
 
-import com.study.douyin.common.utils.JwtUtils;
+import com.study.douyin.interact.util.JwtUtils;
 import com.study.douyin.interact.feign.BasicFeignService;
 import com.study.douyin.interact.service.FavoriteService;
 import com.study.douyin.interact.vo.CommentVo;

@@ -1,4 +1,4 @@
-package com.study.douyin.interact.comfig;
+package com.study.douyin.interact.config;
 
 
 import org.springframework.boot.autoconfigure.cache.CacheProperties;

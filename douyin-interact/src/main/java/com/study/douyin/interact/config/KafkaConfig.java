@@ -1,4 +1,4 @@
-package com.study.douyin.interact.comfig;
+package com.study.douyin.interact.config;
 
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.annotation.Bean;

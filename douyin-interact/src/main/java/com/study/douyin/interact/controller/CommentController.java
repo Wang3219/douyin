@@ -1,6 +1,6 @@
 package com.study.douyin.interact.controller;
 
-import com.study.douyin.common.utils.JwtUtils;
+import com.study.douyin.interact.util.JwtUtils;
 import com.study.douyin.interact.service.CommentService;
 import com.study.douyin.interact.vo.Comment;
 import com.study.douyin.interact.vo.CommentVo;

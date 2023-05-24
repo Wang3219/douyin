@@ -9,7 +9,7 @@ import com.study.douyin.basic.vo.FeedVo;
 import com.study.douyin.basic.vo.User;
 import com.study.douyin.basic.vo.UserInfoVo;
 import com.study.douyin.basic.vo.UserVo;
-import com.study.douyin.common.utils.JwtUtils;
+import com.study.douyin.basic.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

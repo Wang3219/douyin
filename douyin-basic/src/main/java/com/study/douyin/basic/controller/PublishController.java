@@ -4,7 +4,7 @@ import com.study.douyin.basic.entity.UserEntity;
 import com.study.douyin.basic.service.UserService;
 import com.study.douyin.basic.service.VideoService;
 import com.study.douyin.basic.vo.*;
-import com.study.douyin.common.utils.JwtUtils;
+import com.study.douyin.basic.util.JwtUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

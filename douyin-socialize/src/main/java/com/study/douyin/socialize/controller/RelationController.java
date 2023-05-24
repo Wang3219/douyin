@@ -1,11 +1,10 @@
 package com.study.douyin.socialize.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.study.douyin.common.utils.JwtUtils;
+import com.study.douyin.socialize.util.JwtUtils;
 import com.study.douyin.socialize.entity.FollowEntity;
 import com.study.douyin.socialize.feign.BasicFeignService;
 import com.study.douyin.socialize.service.FollowService;
-import com.study.douyin.socialize.vo.MessageVo;
 import com.study.douyin.socialize.vo.RelationVo;
 import com.study.douyin.socialize.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;

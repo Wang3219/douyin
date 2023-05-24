@@ -1,4 +1,4 @@
-package com.study.douyin.common.utils;
+package com.study.douyin.socialize.util;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;

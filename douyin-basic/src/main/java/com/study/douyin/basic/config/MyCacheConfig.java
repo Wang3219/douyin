@@ -1,4 +1,4 @@
-package com.study.douyin.socialize.comfig;
+package com.study.douyin.basic.config;
 
 
 import org.springframework.boot.autoconfigure.cache.CacheProperties;

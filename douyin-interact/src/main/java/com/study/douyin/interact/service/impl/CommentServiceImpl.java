@@ -3,7 +3,6 @@ package com.study.douyin.interact.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.study.douyin.common.utils.JwtUtils;
 import com.study.douyin.interact.dao.CommentDao;
 import com.study.douyin.interact.entity.CommentEntity;
 import com.study.douyin.interact.feign.BasicFeignService;

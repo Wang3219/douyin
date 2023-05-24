@@ -1,6 +1,6 @@
 package com.study.douyin.socialize.controller;
 
-import com.study.douyin.common.utils.JwtUtils;
+import com.study.douyin.socialize.util.JwtUtils;
 import com.study.douyin.socialize.feign.BasicFeignService;
 import com.study.douyin.socialize.service.MessageService;
 import com.study.douyin.socialize.vo.Message;
