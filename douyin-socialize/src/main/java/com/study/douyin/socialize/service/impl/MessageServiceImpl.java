@@ -31,8 +31,8 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
     private MessageService messageService;
 
     @Caching(evict = {
-            @CacheEvict(value = "message", key = "#fromUserId"),
-            @CacheEvict(value = "message", key = "#toUserId")
+            @CacheEvict(value = "message", key = "#fromUserId+':'+#toUserId"),
+            @CacheEvict(value = "message", key = "#toUserId+':'+#fromUserId")
     })
     @Override
     public boolean action(long fromUserId, long toUserId, int actionType, String content) {
@@ -107,7 +107,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageDao, MessageEntity> i
         return messageList;
     }
 
-    @Cacheable(value = "message", key = "#fromUserId", sync = true)
+    @Cacheable(value = "message", key = "#fromUserId+':'+#toUserId", sync = true)
     public List<MessageEntity> getMessageFromRedis(long fromUserId, long toUserId) {
         List<MessageEntity> messageEntities = baseMapper.selectList(new QueryWrapper<MessageEntity>()
                 .or(i -> i.eq("from_user_id", fromUserId).eq("to_user_id", toUserId))
