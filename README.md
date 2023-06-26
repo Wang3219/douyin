@@ -64,4 +64,4 @@
 
 
 ## 运行
-  安装android/app-release.apk后双击右下角我的修改ip为服务器ip，端口为88。并修改application.yml中关于mysql、redis、kafka、nacos以及oss相关配置为自己账户密码端口后启动kafka、nacos和redis即可运行。
+  安装android/app-release.apk后双击右下角我的修改ip为服务器ip，端口为88。并修改application.yml中关于MySQL、Redis、Kafka、Nacos以及OSS相关配置为自己账户密码端口后启动Kafka、Nacos和Redis即可运行。
